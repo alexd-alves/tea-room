@@ -1,26 +1,24 @@
 import logo from './logo.svg';
-import { useEffect, useState } from 'react';
-import Test from './components/Test.jsx';
+import React from 'react';
+import { Route, Routes } from 'react-router-dom';
+
+// Components
+import PlayerList from './components/PlayerList.jsx';
+import CreatePlayer from './components/CreatePlayer.jsx';
+import Navbar from './components/Navbar.jsx';
 
 import './App.css';
 
-function App() {
-  const [message, setMessage] = useState('');
-
-  useEffect(() => {
-    fetch('/api')
-      .then((response) => response.json())
-      .then((data) => setMessage(data.message));
-  }, []);
-
+const App = () => {
   return (
-    <>
-      <div>
-        <Test />
-      </div>
-      <div>{message}</div>
-    </>
+    <div>
+      <Navbar />
+      <Routes>
+        <Route exact path="/" element={<PlayerList />} />
+        <Route path="/create" element={<CreatePlayer />} />
+      </Routes>
+    </div>
   );
-}
+};
 
 export default App;
