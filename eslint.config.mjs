@@ -15,7 +15,7 @@ export default [
     // Additional extends: prettierConfig
     files: ['**/*.{js,mjs,cjs,jsx'],
     languageOptions: {
-      ecmaVersion: latest,
+      ecmaVersion: 2022,
       sourceType: 'module',
       globals: {
         ...globals.browser,

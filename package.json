@@ -4,10 +4,6 @@
   "private": true,
   "dependencies": {
     "@testing-library/dom": "^10.4.1",
-    "body-parser": "^2.3.0",
-    "cors": "^2.8.6",
-    "dotenv": "^17.4.2",
-    "express": "^5.2.1",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "web-vitals": "^2.1.4"
@@ -29,18 +25,20 @@
     "format:check": "prettier --check .",
     "check": "npm run lint && npm run format:check",
     "dev": "vite",
-    "start": "vite",
+    "start:backend": "node server/server.js",
+    "start:frontend": "vite",
+    "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest",
     "prepare": "husky"
   },
   "lint-staged": {
-    "*.&#123;js,jsx,ts,tsx&#125;": [
+    "*.{js,jsx,ts,tsx}": [
       "eslint --fix",
       "prettier --write"
     ],
-    "*.&#123;json,md,css,scss,html,yaml,yml&#125;": [
+    "*.{json,md,css,scss,html,yaml,yml}": [
       "prettier --write"
     ]
   },
@@ -68,6 +66,7 @@
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
     "@vitejs/plugin-react": "^6.0.4",
+    "concurrently": "^10.0.4",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
