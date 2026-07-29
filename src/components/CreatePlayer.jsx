@@ -1,24 +1,26 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
+
 export default function Createplayer() {
   const [form, setForm] = useState({
     discord_id: '',
     name: '',
     flowers: '',
   });
+
   const navigate = useNavigate();
-  // Update the state properties
   function updateForm(value) {
     return setForm((prev) => {
       return { ...prev, ...value };
     });
   }
+
   // Handle the submission
   async function onSubmit(e) {
     e.preventDefault();
-    // POST request sent to the create url, add new record
+    // POST request sent to url, add new record
     const newPlayer = { ...form };
-    await fetch('http://localhost:5000/player/add', {
+    await fetch('http://localhost:5000/api/players/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

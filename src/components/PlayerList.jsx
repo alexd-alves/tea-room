@@ -25,7 +25,7 @@ export default function PlayerList() {
   // Fetch from db
   useEffect(() => {
     async function getPlayers() {
-      const response = await fetch(`http://localhost:5000/player/`);
+      const response = await fetch(`http://localhost:5000/api/players/`);
       if (!response.ok) {
         const message = `An error occurred: ${response.statusText}`;
         window.alert(message);
@@ -40,7 +40,7 @@ export default function PlayerList() {
 
   // Delete player
   async function deletePlayer(id) {
-    await fetch(`http://localhost:5000/${id}`, {
+    await fetch(`http://localhost:5000/api/players/${id}`, {
       method: 'DELETE',
     });
     const newPlayers = players.filter((el) => el._id !== id);
