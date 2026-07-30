@@ -14,7 +14,7 @@ export default function FlowerList() {
   // Fetch from db
   useEffect(() => {
     async function getFlowers() {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/flowers/`);
+      const response = await fetch(`${process.env.VITE_API_URL}/api/flowers/`);
       if (!response.ok) {
         const message = `An error occurred: ${response.statusText}`;
         window.alert(message);

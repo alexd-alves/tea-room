@@ -9,7 +9,7 @@ export default function Stats() {
 
   useEffect(() => {
     async function getPlayerCount() {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/players/get/count`);
+      const response = await fetch(`${process.env.VITE_API_URL}/api/players/get/count`);
       if (!response.ok) {
         const message = `An error occurred: ${response.statusText}`;
         window.alert(message);

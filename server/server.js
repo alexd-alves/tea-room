@@ -16,7 +16,7 @@ const PORT = process.env.PORT || 5000;
 app.use(
   // Set up CORS to allow requests from the frontend
   cors({
-    origin: `${process.env.REACT_APP_API_URL}`,
+    origin: `${process.env.VITE_API_URL}`,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   })
