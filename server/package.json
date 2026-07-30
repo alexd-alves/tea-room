@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "workspaces": [
+    "./src",
+    "./server"
+  ],
   "dependencies": {
     "aws-sdk": "^2.1693.0",
     "bcrypt": "^6.0.0",
