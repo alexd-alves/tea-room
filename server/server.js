@@ -1,16 +1,13 @@
 // server/server.js
 
 require('dotenv').config();
+// Load env variables
+require('dotenv').config({ path: './server/config.env' });
+
 const express = require('express');
 const cors = require('cors');
 const connectDatabase = require('./db/conn');
-
-// Import routes
-const playerRoutes = require('./routes/player.js');
-const flowerRoutes = require('./routes/flower.js');
-
-// Load env variables
-require('dotenv').config({ path: './server/config.env' });
+const connectS3 = require('./services/s3client.js');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -26,15 +23,11 @@ app.use(
 );
 app.use(express.json()); // Built in parser
 
-// Mount routers
-app.use('/api/players', playerRoutes);
-app.use('/api/flowers', flowerRoutes);
-
-// Error handlers
-
-// Listen to port
-app.listen(PORT, () => {
-  console.log(`Server is running on port: ${PORT}`);
+// S3
+connectS3((err) => {
+  if (err) {
+    console.error('Error connecting to S3', err);
+  }
 });
 
 // Database connection
@@ -45,4 +38,21 @@ connectDatabase((err) => {
     // Connection successful
     startServer();
   }
+});
+
+// Import routes
+const playerRoutes = require('./routes/player.js');
+const flowerRoutes = require('./routes/flower.js');
+const uploadRoutes = require('./routes/upload.js');
+
+// Mount routers
+app.use('/api/players', playerRoutes);
+app.use('/api/flowers', flowerRoutes);
+app.use('/api/upload', uploadRoutes);
+
+// Error handlers
+
+// Listen to port
+app.listen(PORT, () => {
+  console.log(`Server is running on port: ${PORT}`);
 });

@@ -2,7 +2,7 @@
 const Player = require('../models/player.model.js');
 
 // @desc Get all players
-// @route GET /api/player
+// @route GET /api/players
 // @access Public
 const getAllPlayers = async (req, res) => {
   try {
@@ -13,8 +13,20 @@ const getAllPlayers = async (req, res) => {
   }
 };
 
+// @desc Get player count
+// @route GET /api/players/get/count
+// @access Public
+const getPlayerCount = async (req, res) => {
+  try {
+    const count = await Player.countDocuments({});
+    res.json({ count: count });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 // @desc Get player by id
-// @route GET /api/player/:id
+// @route GET /api/players/:id
 // @access Public
 const getPlayerById = async (req, res) => {
   try {
@@ -26,7 +38,7 @@ const getPlayerById = async (req, res) => {
 };
 
 // @desc Add a new player
-// @route POST /api/player
+// @route POST /api/players
 // @access Private
 const addPlayer = async (req, res) => {
   try {
@@ -48,7 +60,7 @@ const addPlayer = async (req, res) => {
 };
 
 // @desc Update player by id
-// @route PUT /api/player/:id
+// @route PUT /api/players/:id
 // @access Private
 const updatePlayerById = async (req, res) => {
   try {
@@ -66,7 +78,7 @@ const updatePlayerById = async (req, res) => {
 };
 
 // @desc Delete player by id
-// @route DELETE /api/player/:id
+// @route DELETE /api/players/:id
 // @access Private
 const deletePlayerById = async (req, res) => {
   try {
@@ -79,6 +91,7 @@ const deletePlayerById = async (req, res) => {
 
 module.exports = {
   getAllPlayers,
+  getPlayerCount,
   getPlayerById,
   addPlayer,
   updatePlayerById,
