@@ -9,10 +9,6 @@
     "react-router-dom": "^7.18.1",
     "web-vitals": "^2.1.4"
   },
-  "workspaces": [
-    "./",
-    "./server"
-  ],
   "browser": {
     "assert": false,
     "util": false,
