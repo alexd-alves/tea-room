@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 
-const { URL } = require('../../../config.js');
-
 export default function Createplayer() {
   const [form, setForm] = useState({
     discord_id: '',
