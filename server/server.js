@@ -1,5 +1,6 @@
 // server/server.js
 
+const { URL } = require('../config.js');
 require('dotenv').config();
 // Load env variables
 require('dotenv').config({ path: './server/config.env' });
@@ -16,7 +17,7 @@ const PORT = process.env.PORT || 5000;
 app.use(
   // Set up CORS to allow requests from the frontend
   cors({
-    origin: 'http://localhost:3000',
+    origin: `${URL}`,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   })

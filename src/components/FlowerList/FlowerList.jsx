@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+const { URL } = require('../../../config.js');
+
 const Flower = (props) => (
   <tr>
     <td>{props.flower.name}</td>
@@ -14,7 +16,7 @@ export default function FlowerList() {
   // Fetch from db
   useEffect(() => {
     async function getFlowers() {
-      const response = await fetch(`http://localhost:5000/api/flowers/`);
+      const response = await fetch(`${URL}/api/flowers/`);
       if (!response.ok) {
         const message = `An error occurred: ${response.statusText}`;
         window.alert(message);

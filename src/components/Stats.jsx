@@ -4,12 +4,14 @@ import Stat from './shared/Stat/Stat.jsx';
 
 import styles from './Stats.module.css';
 
+const { URL } = require('../../config.js');
+
 export default function Stats() {
   const [playerCount, setPlayerCount] = React.useState(0);
 
   useEffect(() => {
     async function getPlayerCount() {
-      const response = await fetch('http://localhost:5000/api/players/get/count');
+      const response = await fetch(`${URL}/api/players/get/count`);
       if (!response.ok) {
         const message = `An error occurred: ${response.statusText}`;
         window.alert(message);

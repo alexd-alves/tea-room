@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+const { URL } = require('../../config.js');
+
 export default function FileUpload() {
   const [file, setFile] = useState(null);
   const [status, setStatus] = useState('');
@@ -27,7 +29,7 @@ export default function FileUpload() {
       setStatus('Uploading...');
       setProgress(0);
 
-      const res = await fetch(`http://localhost:5000/api/upload`, {
+      const res = await fetch(`${URL}/api/upload`, {
         method: 'POST',
         body: formData,
         onUploadProgress: (progressEvent) => {

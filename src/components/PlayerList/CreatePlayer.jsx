@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 
+const { URL } = require('../../../config.js');
+
 export default function Createplayer() {
   const [form, setForm] = useState({
     discord_id: '',
@@ -20,7 +22,7 @@ export default function Createplayer() {
     e.preventDefault();
     // POST request sent to url, add new record
     const newPlayer = { ...form };
-    await fetch('http://localhost:5000/api/players/', {
+    await fetch(`${URL}/api/players/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
