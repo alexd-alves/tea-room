@@ -7,6 +7,7 @@ const connectDatabase = require('./db/conn');
 
 // Import routes
 const playerRoutes = require('./routes/player.js');
+const flowerRoutes = require('./routes/flower.js');
 
 // Load env variables
 require('dotenv').config({ path: './server/config.env' });
@@ -27,6 +28,7 @@ app.use(express.json()); // Built in parser
 
 // Mount routers
 app.use('/api/players', playerRoutes);
+app.use('/api/flowers', flowerRoutes);
 
 // Error handlers
 
