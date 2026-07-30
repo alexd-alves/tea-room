@@ -14,6 +14,17 @@
   --shine-soft: rgba(250, 204, 21, 0.22);
 }
 
+/* Light theme class */
+.light-theme {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background:
+    radial-gradient(circle at top left, #ffe8cc 0, transparent 35%),
+    radial-gradient(circle at bottom right, #fce7f3 0, transparent 35%), var(--bg);
+  color: var(--text);
+  padding: 28px;
+}
+
 * {
   box-sizing: border-box;
 }
