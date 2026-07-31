@@ -1,13 +1,13 @@
 // server/server.js
 
-require('dotenv').config();
+import { configDotenv } from 'dotenv';
 // Load env variables
-require('dotenv').config({ path: './server/config.env' });
+configDotenv({ path: '.env' });
 
-const express = require('express');
-const cors = require('cors');
-const connectDatabase = require('./db/conn');
-const connectS3 = require('./services/s3client.js');
+import express from 'express';
+import cors from 'cors';
+import connectDatabase from './db/conn.js';
+import connectS3 from './services/s3client.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -16,7 +16,7 @@ const PORT = process.env.PORT || 5000;
 app.use(
   // Set up CORS to allow requests from the frontend
   cors({
-    origin: `${process.env.VITE_API_URL}`,
+    origin: process.env.VITE_FRONTEND_URL,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   })
@@ -41,9 +41,9 @@ connectDatabase((err) => {
 });
 
 // Import routes
-const playerRoutes = require('./routes/player.js');
-const flowerRoutes = require('./routes/flower.js');
-const uploadRoutes = require('./routes/upload.js');
+import playerRoutes from './routes/player.js';
+import flowerRoutes from './routes/flower.js';
+import uploadRoutes from './routes/upload.js';
 
 // Mount routers
 app.use('/api/players', playerRoutes);

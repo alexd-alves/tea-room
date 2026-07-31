@@ -27,7 +27,7 @@ export default function FileUpload() {
       setStatus('Uploading...');
       setProgress(0);
 
-      const res = await fetch(`${process.env.VITE_API_URL}/api/upload`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/upload`, {
         method: 'POST',
         body: formData,
         onUploadProgress: (progressEvent) => {
