@@ -1,4 +1,5 @@
 // server/controllers/flowerController.js
+
 const Flower = require('../models/flower.model.js');
 
 // @desc Get all flowers

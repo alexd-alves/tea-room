@@ -1,3 +1,5 @@
+// src/components/shared/Stat/Stat.jsx
+
 import React from 'react';
 
 import styles from './Stat.module.css';

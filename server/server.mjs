@@ -1,4 +1,4 @@
-// server/server.js
+// server/server.mjs
 
 import { configDotenv } from 'dotenv';
 // Load env variables

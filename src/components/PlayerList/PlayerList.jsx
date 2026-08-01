@@ -1,5 +1,12 @@
+// src/components/PlayerList/PlayerList.jsx
+
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+
+import Button from '../shared/Button/Button.jsx';
+import Navbar from '../shared/Navbar/Navbar.jsx';
+
+import styles from './PlayerList.module.css';
 
 const Player = (props) => (
   <tr>
@@ -59,7 +66,15 @@ export default function PlayerList() {
   // Display table
   return (
     <div>
-      <h3>Players List</h3>
+      <Navbar />
+      <div className={styles.header}>
+        <span>
+          <h2>Players List</h2>
+        </span>
+        <span>
+          <Button label="Add Player" onClick={() => (window.location.href = '/players/create')} />
+        </span>
+      </div>
       <table style={{ marginTop: 20 }}>
         <thead>
           <tr>

@@ -1,0 +1,1819 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Tea Room Gallery Tracker</title>
+    <style>
+      :root {
+        --bg: #fff8f1;
+        --bg-soft: #fff1e5;
+        --card: #ffffff;
+        --text: #4a3528;
+        --muted: #8a6f60;
+        --heading: #2f1f17;
+        --border: #f0d8c2;
+        --r30: #c084fc;
+        --r28: #38bdf8;
+        --r25: #f59e0b;
+        --shadow: 0 14px 35px rgba(94, 58, 30, 0.13);
+        --shine: #facc15;
+        --shine-soft: rgba(250, 204, 21, 0.22);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background:
+          radial-gradient(circle at top left, #ffe8cc 0, transparent 35%),
+          radial-gradient(circle at bottom right, #fce7f3 0, transparent 35%), var(--bg);
+        color: var(--text);
+        padding: 28px;
+      }
+      header {
+        max-width: 1250px;
+        margin: 0 auto 26px;
+        text-align: center;
+      }
+      h1 {
+        margin: 0;
+        font-size: clamp(2rem, 4vw, 3.4rem);
+        color: var(--heading);
+        letter-spacing: -1px;
+      }
+      .subtitle {
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 1rem;
+      }
+      .toolbar {
+        max-width: 1250px;
+        margin: 0 auto 22px;
+        display: grid;
+        grid-template-columns: 1.5fr 180px 220px 220px 210px;
+        gap: 14px;
+      }
+      input,
+      select {
+        width: 100%;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 14px 16px;
+        font-size: 1rem;
+        background: rgba(255, 255, 255, 0.9);
+        color: var(--text);
+        box-shadow: 0 6px 18px rgba(94, 58, 30, 0.08);
+        outline: none;
+      }
+      input:focus,
+      select:focus {
+        border-color: #f59e0b;
+        box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.16);
+      }
+      .stats {
+        max-width: 1250px;
+        margin: 0 auto 24px;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 14px;
+      }
+      .stat {
+        background: rgba(255, 255, 255, 0.88);
+        border: 1px solid var(--border);
+        border-radius: 22px;
+        padding: 16px;
+        text-align: center;
+        box-shadow: var(--shadow);
+      }
+      .stat strong {
+        display: block;
+        font-size: 1.8rem;
+        color: var(--heading);
+      }
+      .stat span {
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+      .extra-panels {
+        max-width: 1250px;
+        margin: 0 auto 24px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+      }
+      .panel {
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 18px;
+        box-shadow: var(--shadow);
+      }
+      .panel h2 {
+        margin: 0 0 12px;
+        color: var(--heading);
+        font-size: 1.2rem;
+      }
+      .chip-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .chip {
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 7px 11px;
+        font-size: 0.85rem;
+        font-weight: 700;
+      }
+      .chip.shiny-chip {
+        background: linear-gradient(135deg, #fef3c7, #fce7f3);
+        border-color: var(--shine);
+        color: #92400e;
+      }
+      .owner-results {
+        display: grid;
+        gap: 8px;
+        margin-top: 12px;
+        max-height: 260px;
+        overflow: auto;
+      }
+      .owner-row {
+        background: #fffaf5;
+        border: 1px solid #f3dfc8;
+        border-radius: 14px;
+        padding: 9px 11px;
+        font-size: 0.92rem;
+      }
+      .owner-row.has-attribute-row {
+        background: linear-gradient(135deg, #fff7ed, #fff1f9);
+        border: 2px solid var(--shine);
+        box-shadow: 0 0 0 3px var(--shine-soft);
+        font-weight: 700;
+      }
+      .grid {
+        max-width: 1250px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+        gap: 20px;
+      }
+      .member-card {
+        background: rgba(255, 255, 255, 0.94);
+        border: 1px solid var(--border);
+        border-radius: 28px;
+        padding: 20px;
+        box-shadow: var(--shadow);
+        position: relative;
+        overflow: hidden;
+      }
+      .member-card::before {
+        content: '';
+        position: absolute;
+        top: -42px;
+        right: -42px;
+        width: 130px;
+        height: 130px;
+        background: linear-gradient(135deg, #fed7aa, #fbcfe8);
+        border-radius: 50%;
+        opacity: 0.55;
+      }
+      .member-card.member-has-attributes {
+        border-color: rgba(250, 204, 21, 0.75);
+        box-shadow:
+          0 14px 35px rgba(94, 58, 30, 0.13),
+          0 0 0 4px rgba(250, 204, 21, 0.11);
+      }
+      .member-header {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: flex-start;
+        margin-bottom: 12px;
+      }
+      .member-name {
+        margin: 0;
+        font-size: 1.34rem;
+        color: var(--heading);
+      }
+      .count-pill {
+        white-space: nowrap;
+        background: var(--bg-soft);
+        color: #9a3412;
+        border: 1px solid #fed7aa;
+        border-radius: 999px;
+        padding: 6px 10px;
+        font-size: 0.8rem;
+        font-weight: 800;
+      }
+      .attribute-summary {
+        position: relative;
+        z-index: 1;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin: 0 0 12px;
+        background: linear-gradient(135deg, #fef3c7, #fce7f3);
+        color: #92400e;
+        border: 1px solid var(--shine);
+        border-radius: 999px;
+        padding: 7px 10px;
+        font-size: 0.82rem;
+        font-weight: 900;
+      }
+      ul {
+        position: relative;
+        z-index: 1;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        gap: 8px;
+      }
+      li {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        background: #fffaf7;
+        border: 1px solid #f4e2d1;
+        padding: 8px 10px;
+        border-radius: 14px;
+        font-size: 0.94rem;
+        min-height: 40px;
+      }
+      li.has-attribute {
+        position: relative;
+        background: linear-gradient(135deg, #fff7ed, #fff1f9);
+        border: 2px solid var(--shine);
+        box-shadow:
+          0 0 0 3px var(--shine-soft),
+          0 8px 20px rgba(217, 119, 6, 0.18);
+        margin-top: 5px;
+      }
+      .attribute-badge {
+        position: absolute;
+        top: -11px;
+        left: -9px;
+        background: linear-gradient(135deg, #f59e0b, #ec4899);
+        color: white;
+        border: 2px solid white;
+        border-radius: 999px;
+        padding: 3px 7px;
+        font-size: 0.72rem;
+        font-weight: 900;
+        box-shadow: 0 4px 10px rgba(180, 83, 9, 0.28);
+        z-index: 2;
+      }
+      .attribute-label {
+        margin-left: auto;
+        background: #fef3c7;
+        color: #92400e;
+        border: 1px solid var(--shine);
+        border-radius: 999px;
+        padding: 3px 7px;
+        font-size: 0.72rem;
+        font-weight: 900;
+        white-space: nowrap;
+      }
+      .tag {
+        min-width: 38px;
+        text-align: center;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 999px;
+        font-weight: 900;
+        font-size: 0.78rem;
+        box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.08);
+      }
+      .r30 {
+        background: var(--r30);
+      }
+      .r28 {
+        background: var(--r28);
+      }
+      .r25 {
+        background: var(--r25);
+      }
+      .empty {
+        max-width: 1250px;
+        margin: 20px auto;
+        text-align: center;
+        color: var(--muted);
+        display: none;
+      }
+      footer {
+        max-width: 1250px;
+        margin: 34px auto 0;
+        text-align: center;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+      .legend {
+        max-width: 1250px;
+        margin: 0 auto 18px;
+        color: var(--muted);
+        text-align: center;
+        font-size: 0.92rem;
+      }
+      .legend strong {
+        color: #92400e;
+      }
+      @media (max-width: 1100px) {
+        .toolbar {
+          grid-template-columns: 1fr 1fr;
+        }
+        .extra-panels {
+          grid-template-columns: 1fr;
+        }
+        .stats {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+      @media (max-width: 760px) {
+        body {
+          padding: 18px;
+        }
+        .toolbar,
+        .stats {
+          grid-template-columns: 1fr;
+        }
+        .member-header {
+          flex-direction: column;
+        }
+        .attribute-label {
+          display: none;
+        }
+      }
+
+      /* Admin manual flower mapping */
+      .admin-toggle-wrap {
+        max-width: 1250px;
+        margin: 0 auto 18px;
+        text-align: center;
+      }
+      .admin-toggle {
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 11px 16px;
+        background: linear-gradient(135deg, #fef3c7, #fce7f3);
+        color: #92400e;
+        font-weight: 900;
+        cursor: pointer;
+        box-shadow: var(--shadow);
+      }
+      .admin-panel {
+        display: none;
+        max-width: 1250px;
+        margin: 0 auto 24px;
+      }
+      .admin-panel.visible {
+        display: block;
+      }
+      .admin-card {
+        background: rgba(255, 255, 255, 0.94);
+        border: 2px solid rgba(250, 204, 21, 0.8);
+        border-radius: 28px;
+        padding: 20px;
+        box-shadow:
+          var(--shadow),
+          0 0 0 4px rgba(250, 204, 21, 0.12);
+      }
+      .admin-card h2 {
+        margin: 0 0 8px;
+        color: var(--heading);
+      }
+      .admin-help {
+        margin: 0 0 16px;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+      .admin-login,
+      .mapper-form,
+      .mapping-actions {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 14px;
+      }
+      .mapper-form {
+        grid-template-columns: 1.2fr 1.3fr 120px 1fr auto;
+      }
+      .admin-btn {
+        border: 0;
+        border-radius: 16px;
+        padding: 12px 14px;
+        font-weight: 900;
+        cursor: pointer;
+        color: white;
+        background: linear-gradient(135deg, #f59e0b, #ec4899);
+        box-shadow: 0 8px 20px rgba(217, 119, 6, 0.18);
+      }
+      .admin-btn.secondary {
+        background: linear-gradient(135deg, #38bdf8, #c084fc);
+      }
+      .admin-btn.danger {
+        background: linear-gradient(135deg, #ef4444, #f97316);
+      }
+      .admin-btn:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+      .admin-status {
+        color: var(--muted);
+        font-weight: 800;
+        margin: 8px 0 0;
+      }
+      .mapping-list {
+        display: grid;
+        gap: 10px;
+        margin-top: 14px;
+        max-height: 340px;
+        overflow: auto;
+      }
+      .mapping-row {
+        display: grid;
+        grid-template-columns: 58px 1fr auto auto;
+        gap: 12px;
+        align-items: center;
+        background: #fffaf7;
+        border: 1px solid #f4e2d1;
+        border-radius: 18px;
+        padding: 10px;
+      }
+      .mapping-thumb {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        object-fit: cover;
+        border: 1px solid var(--border);
+        background: white;
+      }
+      .mapping-name {
+        font-weight: 900;
+        color: var(--heading);
+      }
+      .mapping-meta {
+        color: var(--muted);
+        font-size: 0.86rem;
+        margin-top: 2px;
+      }
+      .admin-warning {
+        margin-top: 14px;
+        background: #fff7ed;
+        border: 1px solid #fed7aa;
+        color: #9a3412;
+        border-radius: 18px;
+        padding: 12px;
+        font-size: 0.92rem;
+      }
+      @media (max-width: 900px) {
+        .admin-login,
+        .mapper-form,
+        .mapping-actions,
+        .mapping-row {
+          grid-template-columns: 1fr;
+        }
+        .mapping-thumb {
+          width: 64px;
+          height: 64px;
+        }
+      }
+
+      .flower-thumb-inline {
+        width: 30px;
+        height: 30px;
+        border-radius: 10px;
+        object-fit: cover;
+        border: 1px solid var(--border);
+        background: white;
+        flex: 0 0 auto;
+        box-shadow: 0 4px 10px rgba(94, 58, 30, 0.1);
+      }
+      .flower-name-text {
+        flex: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>☕ The Tea Room Gallery Tracker ☕</h1>
+      <p class="subtitle">
+        A clean guild flower tracker with search, sorting, point filters, ownership lookup, and
+        shiny attribute badges.
+      </p>
+    </header>
+    <section class="toolbar">
+      <input type="text" id="searchInput" placeholder="Search member or flower name..." />
+      <select id="pointFilter">
+        <option value="all">All points</option>
+        <option value="30">30 point flowers</option>
+        <option value="28">28 point flowers</option>
+        <option value="25">25 point flowers</option>
+      </select>
+      <select id="attributeFilter">
+        <option value="all">All flowers</option>
+        <option value="hasAttributes">Has attributes only</option>
+        <option value="noAttributes">No attributes only</option>
+      </select>
+      <select id="memberSort">
+        <option value="original">Members: Original order</option>
+        <option value="nameAsc">Members: A-Z</option>
+        <option value="nameDesc">Members: Z-A</option>
+        <option value="countDesc">Most flowers first</option>
+        <option value="countAsc">Fewest flowers first</option>
+        <option value="bonusDesc">Highest bonus total</option>
+      </select>
+      <select id="flowerSort">
+        <option value="pointsDesc">Flowers: Highest points first</option>
+        <option value="pointsAsc">Flowers: Lowest points first</option>
+        <option value="nameAsc">Flowers: A-Z</option>
+        <option value="nameDesc">Flowers: Z-A</option>
+        <option value="bonusDesc">Flowers: Bonus first</option>
+      </select>
+    </section>
+    <section class="stats">
+      <div class="stat"><strong id="memberCount">0</strong><span>Total Members</span></div>
+      <div class="stat"><strong id="flowerCount">0</strong><span>Total Listed Flowers</span></div>
+      <div class="stat"><strong id="uniqueCount">0</strong><span>Unique Flower Names</span></div>
+      <div class="stat">
+        <strong id="attributeCount">0</strong><span>Flowers With Attributes</span>
+      </div>
+      <div class="stat"><strong id="topCount">0</strong><span>Highest Collection Count</span></div>
+    </section>
+    <p class="legend">
+      ✨ Flowers with extra attributes have a <strong>gold shiny outline</strong> and a
+      <strong>+ bonus badge</strong> in the top-left corner.
+    </p>
+    <section class="extra-panels">
+      <div class="panel">
+        <h2>🌷 Most Common Flowers</h2>
+        <div class="chip-list" id="commonFlowers"></div>
+      </div>
+      <div class="panel">
+        <h2>✨ Attribute Bonus Summary</h2>
+        <div class="chip-list" id="attributeSummary"></div>
+      </div>
+      <div class="panel">
+        <h2>🔎 Flower Ownership Lookup</h2>
+        <input type="text" id="ownerLookup" placeholder="Type a flower name to see who has it..." />
+        <div class="owner-results" id="ownerResults"></div>
+      </div>
+      <div class="panel">
+        <h2>☕ Quick Notes</h2>
+        <div class="owner-row">Alias applied: Bubba / Buba = Cloudwhale's Ballad.</div>
+        <div class="owner-row">Alias applied: Jade / Jade Tree = Jade Branch Floral Realm.</div>
+        <div class="owner-row">Alias applied: Haku = Deep Sea Star Scales.</div>
+        <div class="owner-row">Alias applied: Ren = Serenity.</div>
+      </div>
+    </section>
+
+    <section class="admin-toggle-wrap">
+      <button class="admin-toggle" id="adminToggle" type="button">
+        🔐 Admin: Manual Flower Mapping
+      </button>
+    </section>
+    <section class="admin-panel" id="adminPanel">
+      <div class="admin-card">
+        <h2>🔐 Manual Flower Mapping Library</h2>
+        <p class="admin-help">
+          Use this to save flower icon references manually. This is the library a future
+          image-recognition importer can compare screenshots against. Mappings are saved in this
+          browser, and you can export/import them or download a copy of this page with mappings
+          embedded.
+        </p>
+        <div id="adminLocked">
+          <div class="admin-login">
+            <input
+              type="password"
+              id="adminPassword"
+              placeholder="Enter admin password"
+              autocomplete="current-password"
+            />
+            <button class="admin-btn" id="adminLoginBtn" type="button">Unlock</button>
+          </div>
+          <p class="admin-status" id="adminLoginStatus">Admin area is locked.</p>
+        </div>
+        <div id="adminUnlocked" style="display: none">
+          <div class="mapper-form">
+            <input type="file" id="mapIconInput" accept="image/*" />
+            <input type="text" id="mapFlowerName" placeholder="Flower name, e.g. Forest Hart" />
+            <select id="mapFlowerPoints">
+              <option value="30">30 pts</option>
+              <option value="28">28 pts</option>
+              <option value="25">25 pts</option>
+            </select>
+            <input
+              type="text"
+              id="mapFlowerAliases"
+              placeholder="Optional aliases, comma separated"
+            />
+            <button class="admin-btn" id="saveMappingBtn" type="button">Save Mapping</button>
+          </div>
+          <div class="mapping-actions">
+            <input type="file" id="importMappingsInput" accept="application/json,.json" />
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end">
+              <button class="admin-btn secondary" id="exportMappingsBtn" type="button">
+                Export JSON
+              </button>
+              <button class="admin-btn secondary" id="downloadEmbeddedBtn" type="button">
+                Download HTML With Mappings
+              </button>
+              <button class="admin-btn danger" id="lockAdminBtn" type="button">Lock</button>
+            </div>
+          </div>
+          <p class="admin-status" id="mappingStatus">No mappings loaded yet.</p>
+          <div class="mapping-list" id="mappingList"></div>
+          <div class="admin-warning">
+            <strong>Security note:</strong> because GitHub Pages is a static public website, this
+            password is only a casual lock. Anyone who can view the page source could find or bypass
+            it. Do not use your real passwords here.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <main class="grid" id="memberGrid"></main>
+    <p class="empty" id="emptyMessage">No members found matching your search.</p>
+    <footer>Made for The Tea Room guild tracking ✨</footer>
+    <script>
+      const members = [
+        {
+          name: 'Cherri',
+          flowers: [
+            [30, 'Forest Hart'],
+            [28, 'Twigwitch'],
+            [28, 'Easter Bunny'],
+            [28, 'Cloudshine Envoy'],
+            [28, 'Wave-Riding Summer Witch'],
+            [28, 'Lazy Hour'],
+          ],
+        },
+        {
+          name: 'Lumine',
+          flowers: [
+            [30, 'Deep Sea Star Scales'],
+            [28, 'Moonlake Peony'],
+            [28, 'Angel Plume'],
+            [28, 'Gemini: Twin Star Shadows'],
+            [28, 'Cloudshine Envoy'],
+          ],
+        },
+        {
+          name: 'Ovelia',
+          flowers: [
+            [30, 'Jade Branch Floral Realm'],
+            [30, 'Forest Hart'],
+            [30, 'Crystal Ocean Palace'],
+            [28, 'Twigwitch'],
+            [28, 'Angel Plume'],
+            [28, 'Cancer-Starwave'],
+            [28, 'Easter Bunny'],
+            [28, 'Gemini: Twin Star Shadows'],
+            [28, 'Leo-Golden Court'],
+          ],
+        },
+        {
+          name: 'Serenity',
+          flowers: [
+            [30, 'Jade Branch Floral Realm'],
+            [30, 'Forest Hart'],
+            [28, 'Angel Plume'],
+            [28, 'Cancer-Starwave'],
+            [28, 'Blossoming Joy'],
+            [28, 'Cloudtide Floral Skiff'],
+          ],
+        },
+        {
+          name: 'Nana DB',
+          flowers: [
+            [30, 'Cloudwing Pegasus'],
+            [30, "Cloudwhale's Ballad"],
+            [30, 'Jade Branch Floral Realm'],
+            [30, 'Forest Hart'],
+            [28, 'Cloudshine Envoy'],
+            [28, 'Aries-Trace'],
+            [28, 'Cloudtide Floral Skiff'],
+            [28, 'Taurus-Bounty'],
+          ],
+        },
+        {
+          name: 'Joe',
+          flowers: [
+            [30, 'Jade Branch Floral Realm'],
+            [30, 'Forest Hart'],
+            [28, 'Cloudshine Envoy'],
+            [28, 'Leo-Golden Court'],
+            [28, 'Cancer-Starwave'],
+          ],
+        },
+        {
+          name: 'Peach',
+          flowers: [
+            [30, 'Jade Branch Floral Realm'],
+            [30, 'Deep Sea Star Scales'],
+            [28, 'Gemini: Twin Star Shadows'],
+            [28, 'Taurus-Bounty'],
+            [28, 'Cancer-Starwave'],
+            [28, 'Lazy Hour'],
+          ],
+        },
+        {
+          name: 'Happi',
+          flowers: [
+            [30, 'Jade Branch Floral Realm'],
+            [30, "Cloudwhale's Ballad"],
+            [30, 'Forest Hart'],
+            [30, 'Deep Sea Star Scales'],
+            [28, 'Gemini: Twin Star Shadows'],
+            [28, 'Cloudshine Envoy'],
+            [28, 'Taurus-Bounty'],
+          ],
+        },
+        {
+          name: 'Science',
+          flowers: [
+            [28, 'Wave Riding Summer Witch'],
+            [25, 'Champagne Gilded Rose'],
+            [25, 'Warm Gold Abode'],
+            [25, 'Hazeglow Fan'],
+          ],
+        },
+        {
+          name: 'Cath',
+          flowers: [
+            [28, 'Gemini: Twin Star Shadows'],
+            [28, 'Cancer Starwave'],
+            [28, 'Cloudtide Floral Skiff'],
+            [30, 'Jade Branch Floral Realm'],
+          ],
+        },
+        {
+          name: 'Snowy',
+          flowers: [
+            [25, 'Flameheart Dreamshell'],
+            [25, 'Heartbeat Berry'],
+            [25, 'Merrycap'],
+            [25, 'Pearl Magnolia'],
+          ],
+        },
+        {
+          name: 'Cynnikit',
+          flowers: [
+            [28, 'Cancer-Starwave'],
+            [25, 'Blue Crystal Rose'],
+            [25, 'Joyful Meow Melody'],
+            [30, 'Deep Sea Star Scales'],
+            [28, 'Moonlake Peony'],
+            [25, 'Blue Crystal Butterfly Rose'],
+          ],
+        },
+        {
+          name: 'Daphne',
+          flowers: [
+            [28, 'Wave-Riding Summer Witch'],
+            [28, 'Cloudshine Envoy'],
+            [25, 'Harmonic'],
+            [25, 'Peach Peony'],
+            [25, 'Pearl Magnolia'],
+            [25, 'Peach Jeweled Peony'],
+            [25, 'Suncloud Fleece'],
+            [25, 'Starshadow Crystal'],
+            [25, 'Dreamborne Galaxy'],
+            [25, 'Shoal Sandcastle'],
+            [25, 'Pink Hibiscus Jewelry Box'],
+          ],
+        },
+        {
+          name: 'Dustie',
+          flowers: [
+            [25, 'Flower Cake Basket'],
+            [25, 'Gilded Sweet Dreams'],
+            [25, 'Heartbeat Berry'],
+            [25, 'Shoal Sandcastle'],
+          ],
+        },
+        {
+          name: 'Angie',
+          flowers: [
+            [28, 'Cloudshine Envoy'],
+            [28, 'Gemini: Twin Star Shadows'],
+            [25, 'Maroon Wintersweet'],
+            [28, 'Moonlake Peony'],
+            [28, 'Leo-Golden Court'],
+          ],
+        },
+        {
+          name: 'Eryx',
+          flowers: [
+            [25, 'Pink Hibiscus Jewelry Box'],
+            [25, 'Beach Duck Cool Summer'],
+            [25, 'Pearl Magnolia'],
+            [25, 'Heartbeat Berry'],
+            [25, 'Rosy Dream Basket'],
+            [25, 'Starshadow Crystal'],
+            [25, 'Suncloud Fleece'],
+          ],
+        },
+        {
+          name: 'Kacey',
+          flowers: [
+            [30, "Cloudwhale's Ballad"],
+            [30, 'Forest Hart'],
+            [30, 'Cloudwing Pegasus'],
+            [28, 'Aries-Trace'],
+            [30, 'Jade Branch Floral Realm'],
+            [28, 'Pisces-Abyss'],
+            [28, 'Taurus-Bounty'],
+          ],
+        },
+        {
+          name: 'Aivy',
+          flowers: [
+            [30, 'Deep Sea Star Scales'],
+            [30, 'Jade Branch Floral Realm'],
+            [25, 'Hazeglow Fan'],
+            [25, 'Champagne Gilded Rose'],
+            [25, 'Purple Glaze Peony'],
+            [25, 'Joyful Rainbow Duck'],
+            [25, 'Beach Duck Cool Summer'],
+            [28, 'Moonlake Peony'],
+            [28, 'Angel Plume'],
+            [28, 'Gemini: Twin Star Shadows'],
+            [28, 'Cloudtide Floral Skiff'],
+            [28, 'Cancer-Starwave'],
+          ],
+        },
+        {
+          name: 'Kay',
+          flowers: [
+            [30, 'Forest Hart'],
+            [28, 'Angel Plume'],
+            [28, 'Blossoming Joy'],
+            [28, 'Gemini: Twin Star Shadows'],
+            [28, 'Taurus-Bounty'],
+            [28, 'Summer Isle Soundwave'],
+            [28, 'Cancer-Starwave'],
+            [28, 'Lazy Hour'],
+            [28, 'Wave-Riding Summer Witch'],
+            [28, 'Cloudtide Floral Skiff'],
+            [28, 'Cloudshine Envoy'],
+            [30, 'Deep Sea Star Scales'],
+          ],
+        },
+        {
+          name: 'Mina',
+          flowers: [
+            [25, 'Pink Water Lily'],
+            [25, 'Champagne Gilded Rose'],
+            [25, 'Pink Hibiscus Jewelry Box'],
+            [25, 'Neon Crystal Lotus'],
+            [25, 'Pink Cherry Blossom'],
+            [25, 'Flameheart Dream Shell'],
+            [25, 'Pearl Magnolia'],
+            [25, 'Suncloud Fleece'],
+            [25, 'Beach Duck Cool Summer'],
+            [25, 'Starshadow Crystal'],
+          ],
+        },
+        {
+          name: 'Birdy',
+          flowers: [
+            [30, 'Cloudwing Pegasus'],
+            [30, 'Jade Branch Floral Realm'],
+            [30, 'Deep Sea Star Scales'],
+            [30, 'Heavenly Palace'],
+            [30, "Cloudwhale's Ballad"],
+            [30, 'Forest Hart'],
+            [30, 'Dragon Grace'],
+            [28, 'Cloudtide Floral Skiff'],
+            [28, 'Wave Riding Summer Witch'],
+            [28, 'Moonlake Peony'],
+            [28, 'Sugarfrost Witch'],
+            [28, 'Angel Plume'],
+            [28, 'Blooming Joy'],
+            [28, 'Cancer-Starwave'],
+            [28, 'Cupidulip'],
+            [28, 'Twigwitch'],
+            [28, 'Easter Bunny'],
+            [28, 'Gemini: Twin Star Shadows'],
+            [28, 'Wave-Riding Summer Witch'],
+            [28, 'Cloudshine Envoy'],
+            [28, 'Cloudtide Floral Skiff'],
+            [25, 'Purple Glaze Peony'],
+            [25, 'Bear Voice Box'],
+            [25, 'Gilded Sweet Dream'],
+            [25, 'Suncloud Fleece'],
+            [25, 'Beach Duck Cool Summer'],
+            [25, 'Shoal Sandcastle'],
+          ],
+        },
+        {
+          name: 'Lily',
+          flowers: [
+            [30, 'Jade Branch Floral Realm'],
+            [28, 'Cancer-Starwave'],
+            [28, 'Gemini: Twin Star Shadows'],
+            [25, 'Blue Jeweled Peony'],
+            [25, 'Apricot Lotus'],
+            [25, 'Violet Unicorn'],
+            [30, 'Forest Hart'],
+            [28, 'Cloudshine Envoy'],
+            [28, 'Moonlake Peony'],
+            [28, 'Lazy Hour'],
+          ],
+        },
+        {
+          name: 'Synn',
+          flowers: [
+            [25, 'Champagne Gilded Rose'],
+            [25, 'Maroon Wintersweet'],
+            [25, 'Violet Unicorn'],
+            [25, 'Pink Unicorn'],
+            [25, 'Apricot Lotus'],
+            [25, 'Neon Crystal Lotus'],
+            [25, 'Pink Hibiscus Jewelry Box'],
+            [25, 'Heartbeat Berry'],
+            [25, 'Starshadow Crystal'],
+            [25, 'Beach Duck Cool Summer'],
+            [25, 'Rosy Dream Basket'],
+            [25, 'Suncloud Fleece'],
+            [25, 'Shoal Sandcastle'],
+          ],
+        },
+        {
+          name: 'SecretGarden',
+          flowers: [
+            [25, 'Violet Unicorn'],
+            [25, 'Maroon Wintersweet'],
+            [25, 'Neon Crystal Lotus'],
+            [25, 'Starshadow Crystal'],
+            [25, 'Beach Duck Cool Summer'],
+            [25, 'Joyful Rainbow Duck'],
+            [25, 'Dreamborne Galaxy'],
+          ],
+        },
+        {
+          name: 'Jenn',
+          flowers: [
+            [25, 'Pink Dream Shell'],
+            [25, 'Blue Jeweled Peony'],
+            [25, 'Orange Hibiscus Jewelry Box'],
+          ],
+        },
+        {
+          name: 'Thae',
+          flowers: [
+            [28, 'Cancer-Starwave'],
+            [28, 'Blossoming Joy'],
+            [28, 'Moonlake Peony'],
+            [28, 'Cloudshine Envoy'],
+            [30, 'Forest Hart'],
+            [28, 'Leo-Golden Court'],
+          ],
+        },
+        {
+          name: 'Aquabelle',
+          flowers: [
+            [28, 'Cloudtide Floral Skiff'],
+            [28, 'Taurus-Bounty'],
+            [28, 'Aries-Trace'],
+            [25, 'Tea & Meow Talk'],
+            [28, 'Cloudshine Envoy'],
+            [28, 'Lazy Hour'],
+            [28, 'Moonlake Peony'],
+            [28, 'Wave-Riding Summer Witch'],
+          ],
+        },
+        {
+          name: 'Missa',
+          flowers: [
+            [25, 'Blue Dream Shell'],
+            [25, 'Peach Jeweled Peony'],
+            [25, 'Apricot Lotus'],
+            [25, 'Scintilla Pact'],
+            [25, 'Heartbeat Berry'],
+            [25, 'Purple Glaze Peony'],
+            [25, 'Beach Duck Cool Summer'],
+            [25, 'Dreamborne Galaxy'],
+            [25, 'Rosy Dream Basket'],
+            [25, 'Neon Crystal Lotus'],
+          ],
+        },
+        {
+          name: 'Lorah',
+          flowers: [
+            [25, 'Joyful Rainbow Duck'],
+            [25, 'Pink Hibiscus Jewelry Box'],
+            [25, 'Scintilla Pact'],
+            [25, 'Merrycap'],
+          ],
+        },
+        {
+          name: 'Lollamax',
+          flowers: [
+            [28, 'Moonlake Peony'],
+            [25, 'Harmonic Blossom'],
+            [25, 'Peach Unicorn'],
+            [25, 'Purple Glaze Peony'],
+            [25, 'Pink Hibiscus Jewelry Box'],
+            [25, 'Suncloud Fleece'],
+            [25, 'Heartbeat Berry'],
+            [25, 'Beach Duck Cool Summer'],
+            [25, 'Flame Rose Glory'],
+          ],
+        },
+        {
+          name: 'Aleah',
+          flowers: [
+            [25, 'Pink Lotus'],
+            [25, 'Purple Hibiscus Jewelry Box'],
+            [25, 'Beach Duck Cool Summer'],
+            [25, 'Pink Dream Shell'],
+          ],
+        },
+        {
+          name: 'Tina Rose',
+          flowers: [
+            [25, 'Peach Wintersweet'],
+            [25, 'Apricot Lotus'],
+            [25, 'Pink Unicorn'],
+          ],
+        },
+        {
+          name: 'Diec',
+          flowers: [
+            [28, 'Cancer-Starwave'],
+            [25, 'Pink Lotus'],
+            [25, 'Blue Jeweled Peony'],
+            [25, 'Pink Unicorn'],
+            [25, 'Maroon Wintersweet'],
+            [25, 'Orange Hibiscus Jewelry Box'],
+            [25, 'Pink Bloom Abode'],
+            [25, 'Heartbeat Berry'],
+            [25, 'Starshadow Crystal'],
+          ],
+        },
+        {
+          name: 'Ryana',
+          flowers: [
+            [28, 'Summer Isle Soundwave'],
+            [25, 'Orange Hibiscus Jewelry Box'],
+            [25, 'Pink Dream Shell'],
+            [25, 'Hazeglow Fan'],
+            [28, 'Cloudshine Envoy'],
+            [25, 'Blue Dream Shell'],
+            [25, 'Flameheart Dream Shell'],
+            [25, 'Neon Crystal Lotus'],
+            [25, 'Suncloud Fleece'],
+            [25, 'Beach Duck Cool Summer'],
+            [25, 'Sunny Stage'],
+            [25, 'Shoal Sandcastle'],
+            [25, 'Flame Rose Glory'],
+          ],
+        },
+        {
+          name: 'Chantessa',
+          flowers: [
+            [25, 'Light-Tracing Flower Hourglass'],
+            [25, 'Apricot Lotus'],
+            [25, 'Purple Glaze Peony'],
+            [28, 'Leo-Golden Court'],
+            [25, 'Flame Rose Glory'],
+            [25, 'Champagne Gilded Rose'],
+            [25, 'Dreamborne Galaxy'],
+          ],
+        },
+        {
+          name: 'Bree',
+          flowers: [
+            [30, 'Dragon Grace'],
+            [30, 'Heavenly Palace'],
+            [30, 'Deep Sea-Star Scales'],
+            [30, 'Cloudwing Pegasus'],
+            [30, 'Forest Hart'],
+            [30, "Cloudwhale's Ballad"],
+            [30, 'Jade Branch Floral Realm'],
+          ],
+        },
+        {
+          name: 'Laeanna',
+          flowers: [
+            [30, 'Heavenly Palace'],
+            [30, 'Forest Hart'],
+            [30, 'Jade Branch Floral Realm'],
+            [30, "Cloudwhale's Ballad"],
+            [30, 'Crystal Ocean Palace'],
+          ],
+        },
+        {
+          name: 'Yuki',
+          flowers: [
+            [28, 'Moonlake Peony'],
+            [25, 'Suncloud Fleece'],
+            [25, 'Apricot Lotus'],
+            [25, 'Beach Duck Cool Summer'],
+            [25, 'Rosy Dream Basket'],
+            [25, 'Blue Jeweled Peony'],
+            [25, 'Purple Glaze Peony'],
+            [25, 'Floral Thicket Chirps'],
+            [25, 'Flower Fox Cloud Joy'],
+            [25, 'Rainbow Dome Balloon'],
+            [25, 'Gilded Sweet Dream'],
+            [25, 'Neon Crystal Lotus'],
+            [25, 'Joyful Rainbow Duck'],
+            [25, 'Dreamborne Galaxy'],
+            [25, 'Pink Hibiscus Jewelry Box'],
+            [25, 'Scintilla Pact'],
+            [25, 'Moonbathing Crane'],
+            [25, 'Merrycap'],
+            [25, 'Starshadow Crystal'],
+          ],
+        },
+        {
+          name: 'Flowerette',
+          flowers: [
+            [30, 'Deep Sea-Star Scales'],
+            [28, 'Cloudshine Envoy'],
+            [28, 'Cancer-Starwave'],
+            [28, 'Cloudtide Floral Skiff'],
+            [28, 'Summer Isle Soundwave'],
+            [28, 'Leo-Golden Court'],
+          ],
+        },
+        {
+          name: 'Ellie',
+          flowers: [
+            [25, 'Purple Hibiscus Jewelry Box'],
+            [25, 'Scintilla Pact'],
+            [25, 'Beach Duck Cool Summer'],
+            [25, 'Suncloud Fleece'],
+            [25, 'Pearl Magnolia'],
+            [25, 'Champagne Gilded Rose'],
+            [25, 'Pink Water Lily'],
+            [25, 'Pink Lotus'],
+            [25, 'Pink Bloom Abode'],
+            [25, 'Warm Gold Abode'],
+            [25, 'Dreamborne Galaxy'],
+            [25, 'Purple Cloud Slumber'],
+            [25, 'Dewy Floral Fragrance'],
+            [25, 'Flame Rose Glory'],
+            [25, 'Light-Tracing Flower Hourglass'],
+          ],
+        },
+        {
+          name: 'Anja',
+          flowers: [
+            [30, 'Forest Hart'],
+            [30, 'Jade Branch Floral Realm'],
+            [28, 'Summer Isle Soundwave'],
+            [28, 'Cloudtide Floral Skiff'],
+            [28, 'Cloudshine Envoy'],
+            [28, 'Leo-Golden Court'],
+            [28, 'Crystal Frost Beauty'],
+            [28, 'Blossoming Joy'],
+            [28, 'Twigwitch'],
+            [28, 'Angel Plume'],
+            [28, 'Wave-Riding Summer Witch'],
+          ],
+        },
+        {
+          name: 'Lenari',
+          flowers: [
+            [30, 'Forest Hart'],
+            [28, 'Cancer-Starwave'],
+            [28, 'Cloudshine Envoy'],
+            [28, 'Crystal Frost Beauty'],
+            [28, 'Moonlake Peony'],
+          ],
+        },
+        {
+          name: 'Seabiscuits',
+          flowers: [
+            [30, 'Forest Hart'],
+            [30, 'Jade Branch Floral Realm'],
+            [28, 'Cancer-Starwave'],
+            [28, 'Taurus-Bounty'],
+            [28, 'Cloudtide Floral Skiff'],
+            [28, 'Moonlake Peony'],
+            [28, 'Wave-Riding Summer Witch'],
+            [28, 'Cloudshine Envoy'],
+            [28, 'Leo-Golden Court'],
+          ],
+        },
+        {
+          name: 'Julieta',
+          flowers: [
+            [30, 'Forest Hart'],
+            [28, 'Twigwitch'],
+            [28, 'Moonlake Peony'],
+            [28, 'Wave-Riding Summer Witch'],
+            [28, 'Cloudshine Envoy'],
+            [28, 'Stellar Witch'],
+          ],
+        },
+        {
+          name: 'Elena',
+          flowers: [
+            [30, 'Forest Hart'],
+            [30, 'Jade Branch Floral Realm'],
+            [30, 'Deep Sea Star Scales'],
+            [28, 'Gemini: Twin Star Shadows'],
+            [28, 'Moonlake Peony'],
+            [28, 'Crystal Frost Beauty'],
+            [28, 'Twigwitch'],
+            [28, 'Taurus-Bounty'],
+            [28, 'Summer Isle Soundwave'],
+            [28, 'Leo-Golden Court'],
+            [28, 'Cancer-Starwave'],
+            [28, 'Cloudshine Envoy'],
+            [28, 'Cloudtide Floral Skiff'],
+            [28, 'Wave-Riding Summer Witch'],
+            [28, 'Angel Plume'],
+            [28, 'Blossoming Joy'],
+          ],
+        },
+        {
+          name: 'Speck',
+          flowers: [
+            [25, 'Flower Cake Basket'],
+            [25, 'Gilded Sweet Dream'],
+            [25, 'Heartbeat Berry'],
+            [25, 'Shoal Sandcastle'],
+            [25, 'Starshadow Crystal'],
+          ],
+        },
+      ];
+      const attributeBonuses = [
+        { member: 'Bree', flower: 'Dragon Grace', bonus: 3 },
+        { member: 'Bree', flower: 'Heavenly Palace', bonus: 1 },
+        { member: 'Laeanna', flower: 'Forest Hart', bonus: 4 },
+        { member: 'Laeanna', flower: 'Heavenly Palace', bonus: 3 },
+        { member: 'Laeanna', flower: 'Jade Branch Floral Realm', bonus: 3 },
+        { member: 'Cath', flower: 'Gemini: Twin Star Shadows', bonus: 2 },
+        { member: 'Kacey', flower: 'Pisces', bonus: 4 },
+        { member: 'Kacey', flower: 'Forest Hart', bonus: 2 },
+        { member: 'Kacey', flower: 'Jade Branch Floral Realm', bonus: 1 },
+        { member: 'Kacey', flower: "Cloudwhale's Ballad", bonus: 1 },
+        { member: 'Thae', flower: 'Blooming Joy', bonus: 3 },
+        { member: 'Thae', flower: 'Blossoming Joy', bonus: 3 },
+        { member: 'Thae', flower: 'Cancer-Starwave', bonus: 1 },
+        { member: 'Ovelia', flower: 'Jade Branch Floral Realm', bonus: 4 },
+        { member: 'Ovelia', flower: 'Twigwitch', bonus: 4 },
+        { member: 'Ovelia', flower: 'Easter Bunny', bonus: 2 },
+        { member: 'Ovelia', flower: 'Cancer-Starwave', bonus: 2 },
+        { member: 'Ovelia', flower: 'Gemini: Twin Star Shadows', bonus: 2 },
+        { member: 'Nana DB', flower: 'Aries-Trace', bonus: 3 },
+        { member: 'Nana DB', flower: 'Taurus-Bounty', bonus: 1 },
+        { member: 'Cherri', flower: 'Twigwitch', bonus: 3 },
+        { member: 'Cherri', flower: 'Easter Bunny', bonus: 2 },
+        { member: 'Lumine', flower: 'Moonlake Peony', bonus: 4 },
+        { member: 'Lumine', flower: 'Angel Plume', bonus: 4 },
+        { member: 'Lumine', flower: 'Gemini: Twin Star Shadows', bonus: 2 },
+        { member: 'Lumine', flower: 'Deep Sea Star Scales', bonus: 2 },
+        { member: 'Cynnikit', flower: 'Cancer-Starwave', bonus: 1 },
+        { member: 'Peach', flower: 'Gemini: Twin Star Shadows', bonus: 3 },
+        { member: 'Peach', flower: 'Deep Sea Star Scales', bonus: 3 },
+        { member: 'Peach', flower: 'Taurus-Bounty', bonus: 1 },
+        { member: 'Lav', flower: 'Taurus-Bounty', bonus: 2 },
+        { member: 'Lav', flower: 'Cancer-Starwave', bonus: 2 },
+        { member: 'Lav', flower: 'Sugarfrost Witch', bonus: 2 },
+        { member: 'Lav', flower: "Cloudwhale's Ballad", bonus: 1 },
+        { member: 'Serenity', flower: 'Jade Branch Floral Realm', bonus: 3 },
+        { member: 'Serenity', flower: 'Forest Hart', bonus: 2 },
+        { member: 'Serenity', flower: 'Angel Plume', bonus: 2 },
+        { member: 'Sophie', flower: 'Deep Sea Star Scales', bonus: 3 },
+        { member: 'Sophie', flower: 'Jade Branch Floral Realm', bonus: 2 },
+        { member: 'Sophie', flower: 'Forest Hart', bonus: 2 },
+        { member: 'Sophie', flower: "Cloudwhale's Ballad", bonus: 1 },
+        { member: 'Sophie', flower: 'Cloudtide Floral Skiff', bonus: 1 },
+        { member: 'Sophie', flower: 'Taurus-Bounty', bonus: 1 },
+        { member: 'Joe', flower: 'Cloudshine Envoy', bonus: 3 },
+        { member: 'Joe', flower: 'Forest Hart', bonus: 1 },
+      ];
+
+      const ADMIN_PASSWORD = 'TeaRoomAdmin';
+      const FLOWER_MAPPING_STORAGE_KEY = 'teaNookFlowerIconMappings';
+      const BUILT_IN_FLOWER_MAPPINGS = [];
+      let flowerIconMappings = [];
+
+      function loadFlowerMappings() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(FLOWER_MAPPING_STORAGE_KEY) || '[]');
+          const builtIn = Array.isArray(BUILT_IN_FLOWER_MAPPINGS) ? BUILT_IN_FLOWER_MAPPINGS : [];
+          const merged = [...builtIn, ...saved];
+          const seen = new Set();
+          flowerIconMappings = merged.filter((item) => {
+            const key = normalize(
+              (item.name || '') +
+                ' ' +
+                (item.points || '') +
+                ' ' +
+                (item.imageData || '').slice(0, 40)
+            );
+            if (!item.name || !item.points || !item.imageData || seen.has(key)) return false;
+            seen.add(key);
+            return true;
+          });
+        } catch (error) {
+          flowerIconMappings = [];
+        }
+      }
+      function saveFlowerMappings() {
+        localStorage.setItem(FLOWER_MAPPING_STORAGE_KEY, JSON.stringify(flowerIconMappings));
+      }
+      function setAdminStatus(message) {
+        const status = document.getElementById('mappingStatus');
+        if (status) status.textContent = message;
+      }
+      function renderMappingList() {
+        const list = document.getElementById('mappingList');
+        if (!list) return;
+        list.innerHTML = '';
+        if (!flowerIconMappings.length) {
+          const empty = document.createElement('div');
+          empty.className = 'owner-row';
+          empty.textContent = 'No flower icon mappings saved yet.';
+          list.appendChild(empty);
+          setAdminStatus('No mappings loaded yet.');
+          return;
+        }
+        setAdminStatus(
+          `${flowerIconMappings.length} mapping${flowerIconMappings.length === 1 ? '' : 's'} saved.`
+        );
+        flowerIconMappings.forEach((mapping, index) => {
+          const row = document.createElement('div');
+          row.className = 'mapping-row';
+          const img = document.createElement('img');
+          img.className = 'mapping-thumb';
+          img.src = mapping.imageData;
+          img.alt = mapping.name;
+          const details = document.createElement('div');
+          const name = document.createElement('div');
+          name.className = 'mapping-name';
+          name.textContent = mapping.name;
+          const meta = document.createElement('div');
+          meta.className = 'mapping-meta';
+          meta.textContent = `${mapping.points} points${mapping.aliases && mapping.aliases.length ? ' | aliases: ' + mapping.aliases.join(', ') : ''}`;
+          details.appendChild(name);
+          details.appendChild(meta);
+          const tag = document.createElement('span');
+          tag.className = `tag r${mapping.points}`;
+          tag.textContent = mapping.points;
+          const del = document.createElement('button');
+          del.className = 'admin-btn danger';
+          del.type = 'button';
+          del.textContent = 'Delete';
+          del.addEventListener('click', () => {
+            flowerIconMappings.splice(index, 1);
+            saveFlowerMappings();
+            renderMappingList();
+            renderMembers();
+          });
+          row.appendChild(img);
+          row.appendChild(details);
+          row.appendChild(tag);
+          row.appendChild(del);
+          list.appendChild(row);
+        });
+      }
+      function readFileAsDataUrl(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      }
+      function downloadTextFile(filename, content, type = 'text/plain') {
+        const blob = new Blob([content], { type });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      }
+      function setupAdminMapping() {
+        loadFlowerMappings();
+        const adminToggle = document.getElementById('adminToggle');
+        const adminPanel = document.getElementById('adminPanel');
+        const loginBtn = document.getElementById('adminLoginBtn');
+        const passwordInput = document.getElementById('adminPassword');
+        const loginStatus = document.getElementById('adminLoginStatus');
+        const locked = document.getElementById('adminLocked');
+        const unlocked = document.getElementById('adminUnlocked');
+        const saveBtn = document.getElementById('saveMappingBtn');
+        const lockBtn = document.getElementById('lockAdminBtn');
+        const exportBtn = document.getElementById('exportMappingsBtn');
+        const importInput = document.getElementById('importMappingsInput');
+        const downloadEmbeddedBtn = document.getElementById('downloadEmbeddedBtn');
+        if (!adminToggle || !adminPanel) return;
+        adminToggle.addEventListener('click', () => adminPanel.classList.toggle('visible'));
+        function unlock() {
+          if ((passwordInput.value || '') !== ADMIN_PASSWORD) {
+            loginStatus.textContent = 'Incorrect password.';
+            return;
+          }
+          locked.style.display = 'none';
+          unlocked.style.display = 'block';
+          renderMappingList();
+        }
+        loginBtn.addEventListener('click', unlock);
+        passwordInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') unlock();
+        });
+        lockBtn.addEventListener('click', () => {
+          passwordInput.value = '';
+          locked.style.display = 'block';
+          unlocked.style.display = 'none';
+          loginStatus.textContent = 'Admin area is locked.';
+        });
+        saveBtn.addEventListener('click', async () => {
+          const file = document.getElementById('mapIconInput').files[0];
+          const name = document.getElementById('mapFlowerName').value.trim();
+          const points = Number(document.getElementById('mapFlowerPoints').value);
+          const aliases = document
+            .getElementById('mapFlowerAliases')
+            .value.split(',')
+            .map((a) => a.trim())
+            .filter(Boolean);
+          if (!file || !name || !points) {
+            setAdminStatus('Please choose an icon image, flower name, and points value.');
+            return;
+          }
+          const imageData = await readFileAsDataUrl(file);
+          const existingIndex = flowerIconMappings.findIndex(
+            (item) => normalize(item.name) === normalize(name)
+          );
+          const newMapping = { id: Date.now(), name, points, aliases, imageData };
+          if (existingIndex >= 0) flowerIconMappings[existingIndex] = newMapping;
+          else flowerIconMappings.push(newMapping);
+          saveFlowerMappings();
+          renderMembers();
+          document.getElementById('mapIconInput').value = '';
+          document.getElementById('mapFlowerName').value = '';
+          document.getElementById('mapFlowerAliases').value = '';
+          renderMappingList();
+        });
+        exportBtn.addEventListener('click', () => {
+          downloadTextFile(
+            'tea-nook-flower-mappings.json',
+            JSON.stringify(flowerIconMappings, null, 2),
+            'application/json'
+          );
+        });
+        importInput.addEventListener('change', async () => {
+          const file = importInput.files[0];
+          if (!file) return;
+          const text = await file.text();
+          try {
+            const imported = JSON.parse(text);
+            if (!Array.isArray(imported)) throw new Error('JSON must be an array');
+            const currentByName = new Map(
+              flowerIconMappings.map((item) => [normalize(item.name), item])
+            );
+            imported.forEach((item) => {
+              if (item.name && item.points && item.imageData)
+                currentByName.set(normalize(item.name), item);
+            });
+            flowerIconMappings = Array.from(currentByName.values());
+            saveFlowerMappings();
+            renderMappingList();
+            renderMembers();
+            importInput.value = '';
+          } catch (error) {
+            setAdminStatus('Could not import mappings. Please check the JSON file.');
+          }
+        });
+        downloadEmbeddedBtn.addEventListener('click', () => {
+          let htmlSource = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+          const embedded = `const BUILT_IN_FLOWER_MAPPINGS = ${JSON.stringify(flowerIconMappings, null, 2)};`;
+          htmlSource = htmlSource.replace(
+            /const BUILT_IN_FLOWER_MAPPINGS = \[[\s\S]*?\];/,
+            embedded
+          );
+          downloadTextFile('index-with-flower-mappings.html', htmlSource, 'text/html');
+        });
+      }
+
+      const grid = document.getElementById('memberGrid');
+      const searchInput = document.getElementById('searchInput');
+      const pointFilter = document.getElementById('pointFilter');
+      const attributeFilter = document.getElementById('attributeFilter');
+      const memberSort = document.getElementById('memberSort');
+      const flowerSort = document.getElementById('flowerSort');
+      const emptyMessage = document.getElementById('emptyMessage');
+      const ownerLookup = document.getElementById('ownerLookup');
+      const ownerResults = document.getElementById('ownerResults');
+
+      function normalize(text) {
+        return String(text)
+          .toLowerCase()
+          .replace(/[’']/g, "'")
+          .replace(/[^a-z0-9]+/g, ' ')
+          .trim();
+      }
+      function getAttributeBonus(memberName, flowerName) {
+        const match = attributeBonuses.find(
+          (item) =>
+            normalize(item.member) === normalize(memberName) &&
+            normalize(item.flower) === normalize(flowerName)
+        );
+        return match ? match.bonus : null;
+      }
+
+      function getFlowerMapping(flowerName) {
+        if (!Array.isArray(flowerIconMappings)) return null;
+        const target = normalize(flowerName);
+        return (
+          flowerIconMappings.find(
+            (item) =>
+              normalize(item.name || '') === target ||
+              (Array.isArray(item.aliases) &&
+                item.aliases.some((alias) => normalize(alias) === target))
+          ) || null
+        );
+      }
+      function getMemberBonusTotal(member) {
+        return member.flowers.reduce(
+          (sum, [, flower]) => sum + (getAttributeBonus(member.name, flower) || 0),
+          0
+        );
+      }
+      function getMemberAttributeCount(member) {
+        return member.flowers.filter(([, flower]) => getAttributeBonus(member.name, flower)).length;
+      }
+      function getEmoji(name) {
+        const lower = normalize(name);
+        if (lower.includes('cherri')) return '🍒';
+        if (lower.includes('peach')) return '🍑';
+        if (lower.includes('snow')) return '❄️';
+        if (lower.includes('bird')) return '🐦';
+        if (lower.includes('lily')) return '🌼';
+        if (lower.includes('rose')) return '🌹';
+        if (lower.includes('aqua')) return '🌊';
+        if (lower.includes('flower')) return '🌸';
+        if (lower.includes('secret')) return '🌿';
+        if (lower.includes('bree')) return '✨';
+        if (lower.includes('yuki')) return '🫖';
+        return '🌷';
+      }
+      function getFilteredFlowers(member) {
+        let filteredFlowers = [...member.flowers];
+        if (pointFilter.value !== 'all')
+          filteredFlowers = filteredFlowers.filter(
+            ([points]) => String(points) === pointFilter.value
+          );
+        if (attributeFilter.value === 'hasAttributes')
+          filteredFlowers = filteredFlowers.filter(([, flower]) =>
+            getAttributeBonus(member.name, flower)
+          );
+        if (attributeFilter.value === 'noAttributes')
+          filteredFlowers = filteredFlowers.filter(
+            ([, flower]) => !getAttributeBonus(member.name, flower)
+          );
+        const sortType = flowerSort.value;
+        if (sortType === 'pointsDesc')
+          filteredFlowers.sort((a, b) => b[0] - a[0] || a[1].localeCompare(b[1]));
+        if (sortType === 'pointsAsc')
+          filteredFlowers.sort((a, b) => a[0] - b[0] || a[1].localeCompare(b[1]));
+        if (sortType === 'nameAsc')
+          filteredFlowers.sort((a, b) => a[1].localeCompare(b[1]) || b[0] - a[0]);
+        if (sortType === 'nameDesc')
+          filteredFlowers.sort((a, b) => b[1].localeCompare(a[1]) || b[0] - a[0]);
+        if (sortType === 'bonusDesc')
+          filteredFlowers.sort(
+            (a, b) =>
+              (getAttributeBonus(member.name, b[1]) || 0) -
+                (getAttributeBonus(member.name, a[1]) || 0) ||
+              b[0] - a[0] ||
+              a[1].localeCompare(b[1])
+          );
+        return filteredFlowers;
+      }
+      function getSortedMembers(list) {
+        const sortType = memberSort.value;
+        const sorted = [...list];
+        if (sortType === 'nameAsc') sorted.sort((a, b) => a.name.localeCompare(b.name));
+        if (sortType === 'nameDesc') sorted.sort((a, b) => b.name.localeCompare(a.name));
+        if (sortType === 'countDesc')
+          sorted.sort(
+            (a, b) => b.flowers.length - a.flowers.length || a.name.localeCompare(b.name)
+          );
+        if (sortType === 'countAsc')
+          sorted.sort(
+            (a, b) => a.flowers.length - b.flowers.length || a.name.localeCompare(b.name)
+          );
+        if (sortType === 'bonusDesc')
+          sorted.sort(
+            (a, b) =>
+              getMemberBonusTotal(b) - getMemberBonusTotal(a) || a.name.localeCompare(b.name)
+          );
+        return sorted;
+      }
+      function renderMembers() {
+        const search = normalize(searchInput.value);
+        let filteredMembers = members.filter((member) => {
+          const flowerText = member.flowers.map((flower) => flower.join(' ')).join(' ');
+          const searchableText = normalize(member.name + ' ' + flowerText);
+          const searchMatch = searchableText.includes(search);
+          const pointMatch =
+            pointFilter.value === 'all' ||
+            member.flowers.some(([points]) => String(points) === pointFilter.value);
+          const attributeMatch =
+            attributeFilter.value === 'all' ||
+            (attributeFilter.value === 'hasAttributes' && getMemberAttributeCount(member) > 0) ||
+            (attributeFilter.value === 'noAttributes' &&
+              member.flowers.some(([, flower]) => !getAttributeBonus(member.name, flower)));
+          return searchMatch && pointMatch && attributeMatch;
+        });
+        filteredMembers = getSortedMembers(filteredMembers);
+        grid.innerHTML = '';
+        filteredMembers.forEach((member) => {
+          const shownFlowers = getFilteredFlowers(member);
+          if (!shownFlowers.length) return;
+          const card = document.createElement('article');
+          card.className = 'member-card';
+          const attrCount = getMemberAttributeCount(member);
+          const bonusTotal = getMemberBonusTotal(member);
+          if (attrCount) card.classList.add('member-has-attributes');
+          const header = document.createElement('div');
+          header.className = 'member-header';
+          const title = document.createElement('h2');
+          title.className = 'member-name';
+          title.textContent = `${getEmoji(member.name)} ${member.name}`;
+          const count = document.createElement('span');
+          count.className = 'count-pill';
+          count.textContent = `${shownFlowers.length} item${shownFlowers.length === 1 ? '' : 's'}`;
+          header.appendChild(title);
+          header.appendChild(count);
+          card.appendChild(header);
+          if (attrCount) {
+            const summary = document.createElement('div');
+            summary.className = 'attribute-summary';
+            summary.textContent = `✨ ${attrCount} attribute flower${attrCount === 1 ? '' : 's'} | +${bonusTotal} total bonus`;
+            card.appendChild(summary);
+          }
+          const list = document.createElement('ul');
+          shownFlowers.forEach(([points, flower]) => {
+            const bonus = getAttributeBonus(member.name, flower);
+            const item = document.createElement('li');
+            if (bonus) item.classList.add('has-attribute');
+            const tag = document.createElement('span');
+            tag.className = `tag r${points}`;
+            tag.textContent = points;
+            const flowerName = document.createElement('span');
+            flowerName.className = 'flower-name-text';
+            flowerName.textContent = flower;
+            item.appendChild(tag);
+            const iconMapping = getFlowerMapping(flower);
+            if (iconMapping && iconMapping.imageData) {
+              const icon = document.createElement('img');
+              icon.className = 'flower-thumb-inline';
+              icon.src = iconMapping.imageData;
+              icon.alt = flower;
+              icon.title = flower;
+              item.appendChild(icon);
+            }
+            item.appendChild(flowerName);
+            if (bonus) {
+              const badge = document.createElement('span');
+              badge.className = 'attribute-badge';
+              badge.textContent = `+${bonus}`;
+              item.appendChild(badge);
+              const label = document.createElement('span');
+              label.className = 'attribute-label';
+              label.textContent = `${points}+${bonus} = ${points + bonus}`;
+              item.appendChild(label);
+            }
+            list.appendChild(item);
+          });
+          card.appendChild(list);
+          grid.appendChild(card);
+        });
+        emptyMessage.style.display = grid.children.length ? 'none' : 'block';
+        updateStats();
+      }
+      function updateStats() {
+        const allFlowers = members.flatMap((member) =>
+          member.flowers.map((flower) => ({
+            member: member.name,
+            points: flower[0],
+            flower: flower[1],
+          }))
+        );
+        const uniqueFlowers = new Set(allFlowers.map((item) => normalize(item.flower)));
+        const attributeMatches = allFlowers.filter((item) =>
+          getAttributeBonus(item.member, item.flower)
+        );
+        const highestCount = Math.max(...members.map((member) => member.flowers.length));
+        document.getElementById('memberCount').textContent = members.length;
+        document.getElementById('flowerCount').textContent = allFlowers.length;
+        document.getElementById('uniqueCount').textContent = uniqueFlowers.size;
+        document.getElementById('attributeCount').textContent = attributeMatches.length;
+        document.getElementById('topCount').textContent = highestCount;
+      }
+      function renderCommonFlowers() {
+        const counts = {};
+        members.forEach((member) =>
+          member.flowers.forEach(([points, flower]) => {
+            const key = normalize(flower);
+            counts[key] = counts[key] || { flower, points, count: 0 };
+            counts[key].count += 1;
+          })
+        );
+        const common = Object.values(counts)
+          .sort(
+            (a, b) => b.count - a.count || b.points - a.points || a.flower.localeCompare(b.flower)
+          )
+          .slice(0, 12);
+        const container = document.getElementById('commonFlowers');
+        container.innerHTML = '';
+        common.forEach((item) => {
+          const chip = document.createElement('span');
+          chip.className = 'chip';
+          chip.textContent = `${item.flower} - ${item.count}`;
+          container.appendChild(chip);
+        });
+      }
+      function renderAttributeSummary() {
+        const rows = [];
+        members.forEach((member) =>
+          member.flowers.forEach(([points, flower]) => {
+            const bonus = getAttributeBonus(member.name, flower);
+            if (bonus) rows.push({ member: member.name, flower, points, bonus });
+          })
+        );
+        rows.sort((a, b) => b.bonus - a.bonus || a.member.localeCompare(b.member));
+        const container = document.getElementById('attributeSummary');
+        container.innerHTML = '';
+        rows.slice(0, 18).forEach((item) => {
+          const chip = document.createElement('span');
+          chip.className = 'chip shiny-chip';
+          chip.textContent = `${item.member}: ${item.flower} +${item.bonus}`;
+          container.appendChild(chip);
+        });
+      }
+      function renderOwnerLookup() {
+        const query = normalize(ownerLookup.value);
+        ownerResults.innerHTML = '';
+        if (!query) {
+          const hint = document.createElement('div');
+          hint.className = 'owner-row';
+          hint.textContent = 'Start typing a flower name to see matching members.';
+          ownerResults.appendChild(hint);
+          return;
+        }
+        const matches = [];
+        members.forEach((member) =>
+          member.flowers.forEach(([points, flower]) => {
+            if (normalize(flower).includes(query))
+              matches.push({
+                member: member.name,
+                flower,
+                points,
+                bonus: getAttributeBonus(member.name, flower) || 0,
+              });
+          })
+        );
+        if (!matches.length) {
+          const none = document.createElement('div');
+          none.className = 'owner-row';
+          none.textContent = 'No matching flower owners found.';
+          ownerResults.appendChild(none);
+          return;
+        }
+        matches
+          .sort(
+            (a, b) => b.bonus - a.bonus || b.points - a.points || a.member.localeCompare(b.member)
+          )
+          .forEach((match) => {
+            const row = document.createElement('div');
+            row.className = match.bonus ? 'owner-row has-attribute-row' : 'owner-row';
+            row.textContent = match.bonus
+              ? `${match.member} has ${match.points} - ${match.flower} (+${match.bonus}, total ${match.points + match.bonus})`
+              : `${match.member} has ${match.points} - ${match.flower}`;
+            ownerResults.appendChild(row);
+          });
+      }
+      searchInput.addEventListener('input', renderMembers);
+      pointFilter.addEventListener('change', renderMembers);
+      attributeFilter.addEventListener('change', renderMembers);
+      memberSort.addEventListener('change', renderMembers);
+      flowerSort.addEventListener('change', renderMembers);
+      ownerLookup.addEventListener('input', renderOwnerLookup);
+      setupAdminMapping();
+      renderMembers();
+      renderCommonFlowers();
+      renderAttributeSummary();
+      renderOwnerLookup();
+    </script>
+  </body>
+</html>

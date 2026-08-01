@@ -1,3 +1,5 @@
+// src/components/Stats.jsx
+
 import React, { useState, useEffect } from 'react';
 
 import Stat from './shared/Stat/Stat.jsx';

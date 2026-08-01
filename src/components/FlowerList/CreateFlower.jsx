@@ -1,13 +1,12 @@
-// src/components/PlayerList/CreatePlayer.jsx
+// src/components/FlowerList/CreateFlower.jsx
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 
-export default function Createplayer() {
+export default function CreateFlower() {
   const [form, setForm] = useState({
-    discord_id: '',
     name: '',
-    flowers: '',
+    compPoints: '',
   });
 
   const navigate = useNavigate();
@@ -21,36 +20,26 @@ export default function Createplayer() {
   async function onSubmit(e) {
     e.preventDefault();
     // POST request sent to url, add new record
-    const newPlayer = { ...form };
-    await fetch(`${import.meta.env.VITE_API_URL}/api/players/`, {
+    const newFlower = { ...form };
+    await fetch(`${import.meta.env.VITE_API_URL}/api/flowers/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(newPlayer),
+      body: JSON.stringify(newFlower),
     }).catch((error) => {
       window.alert(error);
       return;
     });
-    setForm({ discord_id: '', name: '', flowers: '' });
-    navigate('/');
+    setForm({ name: '', compPoints: '' });
+    navigate('/flowers');
   }
 
   // Display form
   return (
     <div>
-      <h3>Create New Player</h3>
+      <h3>Create New Flower</h3>
       <form onSubmit={onSubmit}>
-        <div className="form-group">
-          <label htmlFor="discord_id">Discord ID</label>
-          <input
-            type="text"
-            className="form-control"
-            id="discord_id"
-            value={form.discord_id}
-            onChange={(e) => updateForm({ discord_id: e.target.value })}
-          />
-        </div>
         <div className="form-group">
           <label htmlFor="name">Name</label>
           <input
@@ -62,17 +51,17 @@ export default function Createplayer() {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="flowers">Flowers</label>
+          <label htmlFor="compPoints">Competition Points</label>
           <input
             type="text"
             className="form-control"
-            id="flowers"
-            value={form.flowers}
-            onChange={(e) => updateForm({ flowers: e.target.value })}
+            id="comp-points"
+            value={form.compPoints}
+            onChange={(e) => updateForm({ compPoints: e.target.value })}
           />
         </div>
         <div className="form-group">
-          <input type="submit" value="Create Player" />
+          <input type="submit" value="Create Flower" />
         </div>
       </form>
     </div>
