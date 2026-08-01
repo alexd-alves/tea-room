@@ -22,6 +22,7 @@ const App = () => {
         <Route exact path="/players/create" element={<CreatePlayer />} />
         <Route exact path="/flowers" element={<FlowerList />} />
         <Route exact path="/flowers/create" element={<CreateFlower />} />
+        <Route exact path="/upload" element={<FileUpload />} />
       </Routes>
     </div>
   );
