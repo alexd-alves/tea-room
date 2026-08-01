@@ -79,6 +79,7 @@ export default function FlowerList() {
           <tr>
             <th>Name</th>
             <th>Competition Points</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>{FlowerList()}</tbody>

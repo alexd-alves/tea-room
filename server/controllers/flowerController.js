@@ -14,6 +14,18 @@ const getAllFlowers = async (req, res) => {
   }
 };
 
+// @desc Get flower count
+// @route GET /api/flowers/get/count
+// @access Public
+const getFlowerCount = async (req, res) => {
+  try {
+    const count = await Flower.countDocuments({});
+    res.json({ count: count });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 // @desc Get flower by id
 // @route GET /api/flower/:id
 // @access Public
@@ -80,6 +92,7 @@ const deleteFlowerById = async (req, res) => {
 
 module.exports = {
   getAllFlowers,
+  getFlowerCount,
   getFlowerById,
   addFlower,
   updateFlowerById,
