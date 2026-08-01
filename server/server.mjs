@@ -1,13 +1,11 @@
 // server/server.mjs
 
-import { configDotenv } from 'dotenv';
+import dotenv from 'dotenv';
 // Load env variables
-configDotenv({ path: '.env' });
+dotenv.configDotenv();
 
 import express from 'express';
 import cors from 'cors';
-import connectDatabase from './db/conn.js';
-import connectS3 from './services/s3client.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -23,20 +21,11 @@ app.use(
 );
 app.use(express.json()); // Built in parser
 
-// S3
-connectS3((err) => {
-  if (err) {
-    console.error('Error connecting to S3', err);
-  }
-});
-
 // Database connection
+import connectDatabase from './db/conn.js';
 connectDatabase((err) => {
   if (err) {
     console.error('Error connecting to the database:', err);
-  } else {
-    // Connection successful
-    startServer();
   }
 });
 

@@ -10,6 +10,14 @@ import styles from './FlowerList.module.css';
 
 const Flower = (props) => (
   <tr>
+    <td>
+      {' '}
+      <img
+        src={props.flower.imgUrl}
+        alt={props.flower.name}
+        style={{ width: '100px', height: 'auto' }}
+      />{' '}
+    </td>
     <td>{props.flower.name}</td>
     <td>{props.flower.compPoints}</td>
     <td>
@@ -46,6 +54,24 @@ export default function FlowerList() {
 
   // Delete flower
   async function deleteFlower(id) {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/flowers/${id}`, {
+      method: 'GET',
+    });
+    if (!res.ok) {
+      const message = `An error occurred: ${res.statusText}`;
+      window.alert(message);
+      return;
+    }
+    const data = await res.json();
+    const publicUrl = data.imgUrl;
+    const fileKey = publicUrl.substring(publicUrl.lastIndexOf('/') + 1);
+
+    // Delete the file from the server
+    await fetch(`${import.meta.env.VITE_API_URL}/api/upload/${fileKey}`, {
+      method: 'DELETE',
+    });
+
+    // Delete the flower record from the database
     await fetch(`${import.meta.env.VITE_API_URL}/api/flowers/${id}`, {
       method: 'DELETE',
     });
@@ -77,6 +103,7 @@ export default function FlowerList() {
       <table style={{ marginTop: 20 }}>
         <thead>
           <tr>
+            <th>Image</th>
             <th>Name</th>
             <th>Competition Points</th>
             <th>Action</th>

@@ -1,9 +1,9 @@
 // server/controllers/uploadController.js
 
-const getS3 = require('../services/s3client.js');
+const { getS3 } = require('../services/s3client.mjs');
 const path = require('path');
 
-let { upload, s3 } = getS3();
+const { s3 } = require('../services/s3client.mjs');
 
 // @desc Upload file
 // @route POST /api/upload
@@ -38,6 +38,28 @@ const uploadFile = async (req, res) => {
   }
 };
 
+// @desc Delete file
+// @route DELETE /api/upload/:fileKey
+// @access Public
+const deleteFile = async (req, res) => {
+  try {
+    const { fileKey } = req.params;
+    const bucketName = 'flowers';
+
+    await s3
+      .deleteObject({
+        Bucket: bucketName,
+        Key: fileKey,
+      })
+      .promise();
+
+    res.json({ message: 'File deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 module.exports = {
   uploadFile,
+  deleteFile,
 };

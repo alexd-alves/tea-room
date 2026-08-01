@@ -9,12 +9,11 @@ const flowerSchema = new mongoose.Schema(
       required: [true, 'Name is required'],
       trim: true,
     },
-    img: {
-      data: Buffer,
-      contentType: String,
-    },
     compPoints: {
       type: Number,
+    },
+    imgUrl: {
+      type: String,
     },
   },
   {

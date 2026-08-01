@@ -44,8 +44,8 @@ const getFlowerById = async (req, res) => {
 const addFlower = async (req, res) => {
   try {
     const newFlower = new Flower({
+      imgUrl: req.body.imgUrl,
       name: req.body.name,
-      img: req.body.img,
       compPoints: req.body.compPoints,
     });
     await newFlower.save();
@@ -67,8 +67,8 @@ const updateFlowerById = async (req, res) => {
   try {
     await Flower.findByIdAndUpdate(req.params.id, {
       $set: {
+        imgUrl: req.body.imgUrl,
         name: req.body.name,
-        img: req.body.img,
         compPoints: req.body.compPoints,
       },
     });

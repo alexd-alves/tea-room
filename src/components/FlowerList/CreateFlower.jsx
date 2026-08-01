@@ -1,13 +1,15 @@
 // src/components/FlowerList/CreateFlower.jsx
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 
 export default function CreateFlower() {
   const [form, setForm] = useState({
+    imgUrl: '',
     name: '',
     compPoints: '',
   });
+  const [file, setFile] = useState(null);
 
   const navigate = useNavigate();
   function updateForm(value) {
@@ -16,11 +18,40 @@ export default function CreateFlower() {
     });
   }
 
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
   // Handle the submission
   async function onSubmit(e) {
     e.preventDefault();
     // POST request sent to url, add new record
-    const newFlower = { ...form };
+
+    // Upload file first and get the URL
+    if (!file) {
+      alert('Select a file first.');
+      return;
+    }
+
+    const imgData = new FormData();
+    imgData.append('file', file);
+
+    let resdata;
+
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/upload/`, {
+        method: 'POST',
+        body: imgData,
+      });
+      resdata = await res.json();
+    } catch (err) {
+      console.error(err);
+      alert('File upload failed.');
+      return;
+    }
+
+    // Then create the flower with the uploaded image URL
+    const newFlower = { ...form, imgUrl: resdata.publicUrl };
     await fetch(`${import.meta.env.VITE_API_URL}/api/flowers/`, {
       method: 'POST',
       headers: {
@@ -31,7 +62,8 @@ export default function CreateFlower() {
       window.alert(error);
       return;
     });
-    setForm({ name: '', compPoints: '' });
+
+    setForm({ imageUrl: '', name: '', compPoints: '' });
     navigate('/flowers');
   }
 
@@ -39,6 +71,7 @@ export default function CreateFlower() {
   return (
     <div>
       <h3>Create New Flower</h3>
+      <input type="file" onChange={handleFileChange} />
       <form onSubmit={onSubmit}>
         <div className="form-group">
           <label htmlFor="name">Name</label>
