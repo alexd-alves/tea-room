@@ -1,11 +1,10 @@
 // server/routes/upload.js
 
-const express = require('express');
-const getS3 = require('../services/s3client.mjs');
+import express from 'express';
 const uploadRoutes = express.Router();
-const { uploadFile, deleteFile } = require('../controllers/uploadController.js');
+import { uploadFile, deleteFile } from '../controllers/uploadController.js';
 
-const { upload } = require('../services/s3client.mjs');
+import { upload } from '../services/s3client.js';
 
 // POST /api/upload
 uploadRoutes.route('/').post(upload.single('file'), uploadFile);
@@ -13,4 +12,4 @@ uploadRoutes.route('/').post(upload.single('file'), uploadFile);
 // DELETE /api/upload/:fileKey
 uploadRoutes.route('/:fileKey').delete(deleteFile);
 
-module.exports = uploadRoutes;
+export default uploadRoutes;

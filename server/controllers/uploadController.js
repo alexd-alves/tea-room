@@ -1,9 +1,7 @@
 // server/controllers/uploadController.js
 
-const { getS3 } = require('../services/s3client.mjs');
-const path = require('path');
-
-const { s3 } = require('../services/s3client.mjs');
+import path from 'path';
+import { s3 } from '../services/s3client.js';
 
 // @desc Upload file
 // @route POST /api/upload
@@ -59,7 +57,4 @@ const deleteFile = async (req, res) => {
   }
 };
 
-module.exports = {
-  uploadFile,
-  deleteFile,
-};
+export { uploadFile, deleteFile };

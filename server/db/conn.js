@@ -1,7 +1,7 @@
 // server/db/conn.js
 
-const mongoose = require('mongoose');
-const connectDatabase = () => {
+import mongoose from 'mongoose';
+export default function connectDatabase() {
   mongoose.set('strictQuery', true);
   mongoose
     .connect(`${process.env.MONGODB_URI}`)
@@ -11,5 +11,4 @@ const connectDatabase = () => {
     .catch((err) => {
       console.log(err);
     });
-};
-module.exports = connectDatabase;
+}

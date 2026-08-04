@@ -1,6 +1,6 @@
 // server/models/flower.model.js
 
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const flowerSchema = new mongoose.Schema(
   {
@@ -23,4 +23,4 @@ const flowerSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model('Flower', flowerSchema);
+export default mongoose.model('Flower', flowerSchema);

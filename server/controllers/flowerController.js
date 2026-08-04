@@ -1,6 +1,6 @@
 // server/controllers/flowerController.js
 
-const Flower = require('../models/flower.model.js');
+import Flower from '../models/flower.model.js';
 
 // @desc Get all flowers
 // @route GET /api/flower
@@ -90,7 +90,7 @@ const deleteFlowerById = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   getAllFlowers,
   getFlowerCount,
   getFlowerById,

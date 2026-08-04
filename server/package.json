@@ -2,7 +2,7 @@
   "name": "server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "exports": "./server.js",
   "dependencies": {
     "aws-sdk": "^2.1693.0",
     "bcrypt": "^6.0.0",
@@ -21,6 +21,6 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "types": "vite/client"
 }

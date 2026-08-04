@@ -1,15 +1,15 @@
 // server/routes/player.js
 
-const express = require('express');
+import express from 'express';
 const playerRoutes = express.Router();
-const {
+import {
   getAllPlayers,
   getPlayerCount,
   getPlayerById,
   addPlayer,
   updatePlayerById,
   deletePlayerById,
-} = require('../controllers/playerController.js');
+} from '../controllers/playerController.js';
 
 // GET /api/players and POST /api/players
 playerRoutes.route('/').get(getAllPlayers).post(addPlayer);
@@ -20,4 +20,4 @@ playerRoutes.route('/:id').get(getPlayerById).put(updatePlayerById).delete(delet
 // GET /api/players/count
 playerRoutes.route('/get/count').get(getPlayerCount);
 
-module.exports = playerRoutes;
+export default playerRoutes;

@@ -1,6 +1,6 @@
 // server/controllers/playerController.js
 
-const Player = require('../models/player.model.js');
+import Player from '../models/player.model.js';
 
 // @desc Get all players
 // @route GET /api/players
@@ -90,7 +90,7 @@ const deletePlayerById = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   getAllPlayers,
   getPlayerCount,
   getPlayerById,

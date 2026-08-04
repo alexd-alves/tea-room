@@ -1,15 +1,15 @@
 // server/routes/flower.js
 
-const express = require('express');
+import express from 'express';
 const flowerRoutes = express.Router();
-const {
+import {
   getAllFlowers,
   getFlowerCount,
   getFlowerById,
   addFlower,
   updateFlowerById,
   deleteFlowerById,
-} = require('../controllers/flowerController.js');
+} from '../controllers/flowerController.js';
 
 // GET /api/flower and POST /api/flower
 flowerRoutes.route('/').get(getAllFlowers).post(addFlower);
@@ -20,4 +20,4 @@ flowerRoutes.route('/:id').get(getFlowerById).put(updateFlowerById).delete(delet
 // GET /api/flowers/count
 flowerRoutes.route('/get/count').get(getFlowerCount);
 
-module.exports = flowerRoutes;
+export default flowerRoutes;
