@@ -1,6 +1,7 @@
 // server/controllers/playerController.js
 
 import Player from '../models/player.model.js';
+import Flower from '../models/flower.model.js';
 
 // @desc Get all players
 // @route GET /api/players
@@ -18,7 +19,9 @@ const getAllPlayers = async (req, res) => {
     }
 
     // Fetch
-    const players = await Player.find().sort({ [sortField]: sortOrder });
+    const players = await Player.find()
+      .sort({ [sortField]: sortOrder })
+      .populate('flowers');
     res.json(players);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -42,7 +45,7 @@ const getPlayerCount = async (req, res) => {
 // @access Public
 const getPlayerById = async (req, res) => {
   try {
-    const player = await Player.findById(req.params.id);
+    const player = await Player.findById(req.params.id).populate('flowers');
     res.json(player);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -66,6 +69,7 @@ const addPlayer = async (req, res) => {
       const errors = Object.values(error.errors).map((err) => err.message);
       res.status(400).json({ errors: errors });
     } else {
+      console.log(error);
       res.status(500).json({ error: error.message });
     }
   }
@@ -101,6 +105,36 @@ const deletePlayerById = async (req, res) => {
   }
 };
 
+// @desc Add flower to player's list
+// @route POST /api/players/:id/flowers
+// @access Public
+const addFlowerToPlayerById = async (req, res) => {
+  try {
+    const player = await Player.findById(req.params.id);
+    if (!player) return res.status(404).json({ error: 'User not found' });
+
+    player.flowers.push(req.body);
+    await player.save();
+    res.json({ message: 'Flower added successfully' });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+// @desc Get all flowers for player
+// @route GET /api/players/:id/flowers
+// @access Public
+const getAllFlowersByPlayerId = async (req, res) => {
+  try {
+    const player = await Player.findById(req.params.id).populate('flowers');
+    if (!player) return res.status(404).json({ error: 'User not found' });
+
+    res.json(player.flowers);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
 export {
   getAllPlayers,
   getPlayerCount,
@@ -108,4 +142,6 @@ export {
   addPlayer,
   updatePlayerById,
   deletePlayerById,
+  addFlowerToPlayerById,
+  getAllFlowersByPlayerId,
 };

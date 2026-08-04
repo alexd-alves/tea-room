@@ -23,14 +23,30 @@ h2 {
   align-items: center;
 }
 
-.playerstable {
+.playersTable {
   table-layout: fixed;
   width: 100%;
   border-collapse: collapse;
 }
 
-.playerscell {
+.playersCell {
   border: 1px solid #2f1f17;
   text-align: left;
   padding: 8px;
+}
+
+.flowerContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.flowerChip {
+  display: inline-block;
+  padding: 6px 14px;
+  margin: 3px;
+  border-radius: 45px;
+  border: 1px solid #facc15;
+  color: #92400e;
+  background: #fff1e5;
 }

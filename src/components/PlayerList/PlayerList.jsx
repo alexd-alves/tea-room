@@ -14,7 +14,7 @@ const Header = ({ columns, sorting, sortTable }) => {
       <tr>
         {columns.map((column) => (
           <HeaderCell
-            className={styles.playerscell}
+            className={styles.playersCell}
             key={column.key}
             column={column}
             sorting={sorting}
@@ -32,7 +32,7 @@ const HeaderCell = ({ column, sorting, sortTable }) => {
   const futureSortingOrder = isDescSorting ? 'asc' : 'desc';
   return (
     <th
-      className={styles.playerscell}
+      className={styles.playersCell}
       key={column.key}
       onClick={() => sortTable({ column: column.key, order: futureSortingOrder })}
     >
@@ -47,7 +47,7 @@ const Player = ({ columns, player, deletePlayer }) => {
   return (
     <tr key={player.discord_id}>
       {columns.map((column) => (
-        <td className={styles.playerscell} key={column.key}>
+        <td className={styles.playersCell} key={column.key}>
           {column.render ? column.render(player, deletePlayer) : player[column.key]}
         </td>
       ))}
@@ -58,7 +58,7 @@ const Player = ({ columns, player, deletePlayer }) => {
 const PlayersTable = ({ columns, sorting, sortTable, players, deletePlayer }) => {
   return (
     <div>
-      <table className={styles.playerstable}>
+      <table className={styles.playersTable}>
         <Header columns={columns} sorting={sorting} sortTable={sortTable} />
         <tbody>
           {players.map((player) => (
@@ -79,7 +79,19 @@ export default function PlayerList() {
   const columns = [
     { key: 'discord_id', label: 'ID' },
     { key: 'name', label: 'Name' },
-    { key: 'flowers', label: 'Flowers' },
+    {
+      key: 'flowers',
+      label: 'Flowers',
+      render: (player) => (
+        <div className={styles.flowerContainer}>
+          {player.flowers.map((flower) => (
+            <span className={styles.flowerChip} key={flower._id}>
+              {flower.name} - {flower.compPoints}
+            </span>
+          ))}
+        </div>
+      ),
+    },
     {
       key: 'action',
       label: 'Action',

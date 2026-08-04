@@ -20,7 +20,8 @@ const playerSchema = new mongoose.Schema(
     },
     flowers: [
       {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Flower',
       },
     ],
   },

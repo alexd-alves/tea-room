@@ -1,0 +1,18 @@
+.flowerDropdown {
+  max-height: 250px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 0;
+  margin-top: 5px;
+  list-style: none;
+  background: white;
+}
+
+.flowerOption {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.flowerOption:hover {
+  background-color: #f2f2f2;
+}

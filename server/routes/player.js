@@ -9,6 +9,8 @@ import {
   addPlayer,
   updatePlayerById,
   deletePlayerById,
+  addFlowerToPlayerById,
+  getAllFlowersByPlayerId,
 } from '../controllers/playerController.js';
 
 // GET /api/players and POST /api/players
@@ -19,5 +21,8 @@ playerRoutes.route('/:id').get(getPlayerById).put(updatePlayerById).delete(delet
 
 // GET /api/players/count
 playerRoutes.route('/get/count').get(getPlayerCount);
+
+//  GET /api/players/:id/flowers and POST /api/players/:id/flowers
+playerRoutes.route('/:id/flowers').get(getAllFlowersByPlayerId).post(addFlowerToPlayerById);
 
 export default playerRoutes;
