@@ -8,31 +8,103 @@ import Navbar from '../shared/Navbar/Navbar.jsx';
 
 import styles from './PlayerList.module.css';
 
-const Player = (props) => (
-  <tr>
-    <td>{props.player.discord_id}</td>
-    <td>{props.player.name}</td>
-    <td>{props.player.flowers}</td>
-    <td>
-      <Link to={`/edit/${props.player._id}`}>Edit</Link> |
-      <button
-        onClick={() => {
-          props.deletePlayer(props.player._id);
-        }}
-      >
-        Delete
-      </button>
-    </td>
-  </tr>
-);
+const Header = ({ columns, sorting, sortTable }) => {
+  return (
+    <thead>
+      <tr>
+        {columns.map((column) => (
+          <HeaderCell
+            className={styles.playerscell}
+            key={column.key}
+            column={column}
+            sorting={sorting}
+            sortTable={sortTable}
+          />
+        ))}
+      </tr>
+    </thead>
+  );
+};
+
+const HeaderCell = ({ column, sorting, sortTable }) => {
+  const isDescSorting = sorting.column === column.key && sorting.order === 'desc';
+  const isAscSorting = sorting.column === column.key && sorting.order === 'asc';
+  const futureSortingOrder = isDescSorting ? 'asc' : 'desc';
+  return (
+    <th
+      className={styles.playerscell}
+      key={column.key}
+      onClick={() => sortTable({ column: column.key, order: futureSortingOrder })}
+    >
+      {column.label}
+      {isDescSorting && <span>▼</span>}
+      {isAscSorting && <span>▲</span>}
+    </th>
+  );
+};
+
+const Player = ({ columns, player, deletePlayer }) => {
+  return (
+    <tr key={player.discord_id}>
+      {columns.map((column) => (
+        <td className={styles.playerscell} key={column.key}>
+          {column.render ? column.render(player, deletePlayer) : player[column.key]}
+        </td>
+      ))}
+    </tr>
+  );
+};
+
+const PlayersTable = ({ columns, sorting, sortTable, players, deletePlayer }) => {
+  return (
+    <div>
+      <table className={styles.playerstable}>
+        <Header columns={columns} sorting={sorting} sortTable={sortTable} />
+        <tbody>
+          {players.map((player) => (
+            <Player
+              key={player.discord_id}
+              columns={columns}
+              player={player}
+              deletePlayer={deletePlayer}
+            />
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
 
 export default function PlayerList() {
+  const columns = [
+    { key: 'discord_id', label: 'ID' },
+    { key: 'name', label: 'Name' },
+    { key: 'flowers', label: 'Flowers' },
+    {
+      key: 'action',
+      label: 'Action',
+      render: (player, deletePlayer) => (
+        <>
+          <Link to={`/edit/${player._id}`}>Edit</Link> |{' '}
+          <button onClick={() => deletePlayer(player._id)}>Delete</button>
+        </>
+      ),
+    },
+  ];
+
   const [players, setPlayers] = useState([]);
+
+  const [sorting, setSorting] = useState({ column: 'name', order: 'asc' });
+  const sortTable = (newSorting) => {
+    setSorting(newSorting);
+  };
 
   // Fetch from db
   useEffect(() => {
     async function getPlayers() {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/players/`);
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/players?_sort=${sorting.column}&_order=${sorting.order}`
+      );
       if (!response.ok) {
         const message = `An error occurred: ${response.statusText}`;
         window.alert(message);
@@ -43,7 +115,7 @@ export default function PlayerList() {
     }
     getPlayers();
     return;
-  }, [players.length]);
+  }, [players.length, sorting]);
 
   // Delete player
   async function deletePlayer(id) {
@@ -52,15 +124,6 @@ export default function PlayerList() {
     });
     const newPlayers = players.filter((el) => el._id !== id);
     setPlayers(newPlayers);
-  }
-
-  // Map players onto table
-  function PlayerList() {
-    return players.map((player) => {
-      return (
-        <Player player={player} deletePlayer={() => deletePlayer(player._id)} key={player._id} />
-      );
-    });
   }
 
   // Display table
@@ -75,17 +138,13 @@ export default function PlayerList() {
           <Button label="Add Player" onClick={() => (window.location.href = '/players/create')} />
         </span>
       </div>
-      <table style={{ marginTop: 20 }}>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Flowers</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>{PlayerList()}</tbody>
-      </table>
+      <PlayersTable
+        columns={columns}
+        sorting={sorting}
+        sortTable={sortTable}
+        players={players}
+        deletePlayer={deletePlayer}
+      />
     </div>
   );
 }

@@ -7,7 +7,18 @@ import Player from '../models/player.model.js';
 // @access Public
 const getAllPlayers = async (req, res) => {
   try {
-    const players = await Player.find();
+    // Extract query params with defaults
+    const sortField = req.query._sort || 'name';
+    const sortOrder = req.query._order === 'desc' ? -1 : 1; // default asc
+
+    // Validate query params
+    const allowedFields = ['name'];
+    if (!allowedFields.includes(sortField)) {
+      return res.status(400).json({ error: 'Invalid sort field' });
+    }
+
+    // Fetch
+    const players = await Player.find().sort({ [sortField]: sortOrder });
     res.json(players);
   } catch (error) {
     res.status(500).json({ error: error.message });

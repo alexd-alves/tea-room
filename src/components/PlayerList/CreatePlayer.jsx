@@ -33,7 +33,7 @@ export default function Createplayer() {
       return;
     });
     setForm({ discord_id: '', name: '', flowers: '' });
-    navigate('/');
+    navigate('/players');
   }
 
   // Display form
