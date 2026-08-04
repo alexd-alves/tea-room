@@ -33,11 +33,13 @@ connectDatabase((err) => {
 import playerRoutes from './routes/player.js';
 import flowerRoutes from './routes/flower.js';
 import uploadRoutes from './routes/upload.js';
+import healthRoutes from './routes/health.js';
 
 // Mount routers
 app.use('/api/players', playerRoutes);
 app.use('/api/flowers', flowerRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/health', healthRoutes);
 
 // Error handlers
 
